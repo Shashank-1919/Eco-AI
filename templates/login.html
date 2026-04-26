@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eco-AI — Sign In</title>
+    <meta name="description" content="Sign in to Eco-AI, your personal renewable energy advisor.">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            height: auto;
+            overflow: auto;
+            background-color: #f5f2eb;
+            background-image:
+                radial-gradient(circle at 15% 25%, rgba(61,139,94,0.10) 0%, transparent 50%),
+                radial-gradient(circle at 85% 75%, rgba(224,123,57,0.08) 0%, transparent 50%),
+                url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='30' cy='30' r='1.5' fill='%233d8b5e' fill-opacity='0.06'/%3E%3C/svg%3E");
+            background-size: auto, auto, 60px 60px;
+        }
+
+        .auth-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            padding: 32px 16px;
+            width: 100%;
+            max-width: 440px;
+        }
+
+        /* Logo mark above card */
+        .auth-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 4px;
+        }
+
+        .auth-brand-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #3d8b5e, #5eab7d);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 6px 18px rgba(61,139,94,0.35);
+        }
+
+        .auth-brand-name {
+            font-family: 'Nunito', sans-serif;
+            font-size: 1.7rem;
+            font-weight: 900;
+            background: linear-gradient(100deg, #3d8b5e 0%, #5eab7d 45%, #e07b39 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Card */
+        .auth-card {
+            background: #ffffff;
+            border: 1.5px solid #e2ddd4;
+            border-radius: 24px;
+            padding: 36px 36px 28px;
+            width: 100%;
+            box-shadow: 0 16px 48px rgba(45,58,46,0.10);
+        }
+
+        .auth-card-title {
+            font-family: 'Nunito', sans-serif;
+            font-size: 1.55rem;
+            font-weight: 800;
+            color: #2d3a2e;
+            margin-bottom: 6px;
+            text-align: center;
+        }
+
+        .auth-card-subtitle {
+            font-size: 0.9rem;
+            color: #8a9a8c;
+            text-align: center;
+            margin-bottom: 26px;
+            font-family: 'Lato', sans-serif;
+        }
+
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .auth-field {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .auth-field label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #4a5568;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            font-family: 'Lato', sans-serif;
+        }
+
+        .auth-input {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1.5px solid #e2ddd4;
+            background: #f9f7f3;
+            color: #2d3a2e;
+            font-size: 0.97rem;
+            font-family: 'Lato', sans-serif;
+            outline: none;
+            transition: border-color 0.25s, box-shadow 0.25s;
+        }
+
+        .auth-input:focus {
+            border-color: #3d8b5e;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(61,139,94,0.12);
+        }
+
+        .auth-input::placeholder {
+            color: #a0aca2;
+        }
+
+        .auth-btn {
+            background: linear-gradient(135deg, #3d8b5e, #5eab7d);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 800;
+            font-family: 'Nunito', sans-serif;
+            cursor: pointer;
+            margin-top: 6px;
+            transition: all 0.25s ease;
+            letter-spacing: 0.01em;
+            box-shadow: 0 6px 16px rgba(61,139,94,0.35);
+        }
+
+        .auth-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 22px rgba(61,139,94,0.45);
+        }
+
+        .auth-divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 4px 0;
+        }
+
+        .auth-divider::before,
+        .auth-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e2ddd4;
+        }
+
+        .auth-divider span {
+            font-size: 0.78rem;
+            color: #a0aca2;
+        }
+
+        .auth-toggle {
+            margin-top: 18px;
+            color: #8a9a8c;
+            font-size: 0.88rem;
+            text-align: center;
+            font-family: 'Lato', sans-serif;
+        }
+
+        .auth-toggle span {
+            color: #3d8b5e;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .auth-toggle span:hover {
+            text-decoration: underline;
+        }
+
+        .auth-back {
+            color: #8a9a8c;
+            text-decoration: none;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: color 0.2s;
+            font-family: 'Lato', sans-serif;
+        }
+
+        .auth-back:hover { color: #3d8b5e; }
+    </style>
+</head>
+<body>
+
+    <div class="auth-wrap">
+        <!-- Branding -->
+        <div class="auth-brand">
+            <div class="auth-brand-icon">🌿</div>
+            <span class="auth-brand-name">Eco-AI</span>
+        </div>
+
+        <!-- Card -->
+        <div class="auth-card">
+            <h1 class="auth-card-title" id="formTitle">Welcome back</h1>
+            <p class="auth-card-subtitle" id="formSubtitle">Sign in to continue to your energy dashboard</p>
+
+            <form id="authForm" class="auth-form">
+                <div class="auth-field">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" class="auth-input" placeholder="e.g. john_doe" required>
+                </div>
+                <div class="auth-field">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" class="auth-input" placeholder="Your password" required>
+                </div>
+
+                <button type="submit" class="auth-btn" id="submitBtn">Sign In</button>
+            </form>
+
+            <div class="auth-toggle" id="toggleText">
+                Don't have an account? <span onclick="toggleMode()">Create one free</span>
+            </div>
+        </div>
+
+        <a href="/" class="auth-back">← Back to chat</a>
+    </div>
+
+    <script>
+        let isLoginMode = true;
+
+        const authForm     = document.getElementById('authForm');
+        const formTitle    = document.getElementById('formTitle');
+        const formSubtitle = document.getElementById('formSubtitle');
+        const submitBtn    = document.getElementById('submitBtn');
+        const toggleText   = document.getElementById('toggleText');
+
+        function toggleMode() {
+            isLoginMode = !isLoginMode;
+            if (isLoginMode) {
+                formTitle.textContent    = 'Welcome back';
+                formSubtitle.textContent = 'Sign in to continue to your energy dashboard';
+                submitBtn.textContent    = 'Sign In';
+                toggleText.innerHTML     = `Don't have an account? <span onclick="toggleMode()">Create one free</span>`;
+            } else {
+                formTitle.textContent    = 'Create account';
+                formSubtitle.textContent = 'Join Eco-AI and start optimising your energy today';
+                submitBtn.textContent    = 'Create Account';
+                toggleText.innerHTML     = `Already have an account? <span onclick="toggleMode()">Sign in</span>`;
+            }
+        }
+
+        authForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            if (!username || !password) return;
+
+            let users = JSON.parse(localStorage.getItem('eco_users')) || {};
+
+            if (isLoginMode) {
+                if (users[username] && users[username] === password) {
+                    sessionStorage.setItem('active_user', username);
+                    window.location.href = '/';
+                } else {
+                    alert('Invalid username or password.');
+                }
+            } else {
+                if (users[username]) {
+                    alert('User already exists — please sign in instead.');
+                    setTimeout(() => { window.location.href = '/login'; }, 1000);
+                } else {
+                    users[username] = password;
+                    localStorage.setItem('eco_users', JSON.stringify(users));
+                    sessionStorage.setItem('active_user', username);
+                    alert('Account created! Redirecting…');
+                    setTimeout(() => { window.location.href = '/'; }, 900);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eco-AI — Full Analysis Result</title>
+    <meta name="description" content="Your complete AI-powered renewable energy recommendation from Eco-AI.">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        :root {
+            --eco-green: #3d8b5e;
+            --eco-green-light: #eff7f2;
+            --eco-green-deep: #2a6141;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(61, 139, 94, 0.08);
+            --text-main: #1e2923;
+            --text-sub: #5c6b62;
+            --transition-smooth: all 0.23s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        html, body {
+            height: auto !important;
+            min-height: 100vh;
+            overflow-y: auto !important;
+            overflow-x: hidden;
+            display: block !important;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: #f4f7f5;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(61, 139, 94, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(224, 123, 57, 0.1) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(61, 139, 94, 0.1) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, rgba(224, 123, 57, 0.1) 0px, transparent 50%);
+            color: var(--text-main);
+            font-family: 'Lato', sans-serif;
+        }
+
+        .result-page { 
+            max-width: 920px; 
+            margin: 0 auto; 
+            padding: 40px 24px 100px;
+        }
+
+        /* Top Bar */
+        .result-topbar {
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            margin-bottom: 32px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+        .btn-back {
+            display: inline-flex; 
+            align-items: center; 
+            gap: 8px; 
+            color: var(--text-sub);
+            text-decoration: none; 
+            font-family: 'Nunito', sans-serif; 
+            font-size: 0.95rem;
+            font-weight: 800; 
+            background: var(--glass-bg); 
+            border: 1px solid var(--glass-border);
+            padding: 10px 22px; 
+            border-radius: 99px; 
+            transition: var(--transition-smooth);
+            backdrop-filter: blur(8px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+        .btn-back:hover { 
+            border-color: var(--eco-green); 
+            color: var(--eco-green); 
+            transform: translateX(-8px);
+            box-shadow: 0 6px 16px rgba(61,139,94,0.1);
+        }
+        .result-brand {
+            font-family: 'Nunito', sans-serif; 
+            font-weight: 900; 
+            font-size: 1.3rem;
+            background: linear-gradient(135deg, var(--eco-green) 0%, var(--eco-orange) 100%);
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Q&A Section Enhancements */
+        .qa-container {
+            background: white;
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .qa-messages {
+            padding: 30px;
+            max-height: 400px;
+            overflow-y: auto;
+            background: #fdfcf9;
+        }
+        .qa-input-area {
+            display: flex;
+            padding: 15px 25px;
+            background: white;
+            border-top: 1px solid #eee;
+            gap: 15px;
+            align-items: center;
+        }
+        .qa-input-area input {
+            flex: 1;
+            padding: 12px 20px;
+            border-radius: 12px;
+            border: 1px solid #eee;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .qa-input-area input:focus {
+            border-color: var(--eco-green);
+        }
+        #qaSendBtn {
+            background: var(--eco-green);
+            color: white;
+            border: none;
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
+        #qaSendBtn:hover { transform: scale(1.05); }
+
+        .qa-bot-msg {
+            margin-bottom: 20px;
+        }
+        .qa-bot-msg.intro-msg {
+            text-align: center;
+            border: 1px dashed var(--eco-green);
+            padding: 20px;
+            border-radius: 16px;
+            background: rgba(61,139,94,0.02);
+        }
+        .qa-bot-msg p { margin: 5px 0; line-height: 1.5; color: var(--text-main); }
+
+        .qa-user-msg {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+        .qa-user-msg span {
+            background: var(--eco-green);
+            color: white;
+            padding: 10px 18px;
+            border-radius: 16px 16px 4px 16px;
+            display: inline-block;
+        }
+        .qa-bot-msg .reply-text {
+            background: #eee;
+            padding: 12px 18px;
+            border-radius: 16px 16px 16px 4px;
+            display: inline-block;
+        }
+
+        /* Hero Card */
+        .result-hero {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            padding: 40px; 
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-premium);
+            position: relative; 
+            overflow: hidden;
+            animation: slideUpLarge 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .result-hero::before {
+            content: ''; 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            height: 6px;
+            background: linear-gradient(90deg, var(--eco-green), var(--eco-green-light), var(--eco-orange), var(--eco-green));
+            background-size: 300% 100%;
+            animation: gradFlow 4s linear infinite;
+        }
+        @keyframes gradFlow { 0% { background-position: 0% 0; } 100% { background-position: 100% 0; } }
+        
+        @keyframes slideUpLarge {
+            from { opacity: 0; transform: translateY(40px) scale(0.96); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .result-hero-title {
+            font-family: 'Nunito', sans-serif; 
+            font-size: 2.2rem; 
+            font-weight: 900;
+            color: var(--text-main); 
+            line-height: 1.1; 
+            margin: 0 0 8px;
+            letter-spacing: -0.02em;
+        }
+        .result-hero-subtype { 
+            font-size: 1rem; 
+            color: var(--text-sub); 
+            font-weight: 600;
+        }
+
+        .hero-badges { display: flex; gap: 12px; margin-top: 16px; }
+        .energy-badge {
+            background: linear-gradient(135deg, var(--eco-green), var(--eco-green-light)); 
+            color: white;
+            padding: 8px 18px; 
+            border-radius: 99px; 
+            font-size: 0.85rem;
+            font-weight: 800;
+            box-shadow: 0 8px 20px rgba(61,139,94,0.25);
+        }
+        .confidence-badge {
+            background: rgba(61,139,94,0.08); 
+            border: 1px solid rgba(61,139,94,0.15);
+            color: var(--eco-green); 
+            padding: 8px 18px; 
+            border-radius: 99px;
+            font-size: 0.85rem; 
+            font-weight: 800;
+        }
+
+        .result-img {
+            width: 100%; 
+            height: 320px; 
+            object-fit: cover;
+            border-radius: 28px; 
+            margin: 32px 0; 
+            border: 1px solid rgba(255,255,255,0.8);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .result-img:hover { transform: scale(1.02); box-shadow: 0 30px 70px rgba(0,0,0,0.2); }
+
+        .result-desc { 
+            font-size: 1.1rem; 
+            color: #445546; 
+            line-height: 1.7; 
+            margin: 0;
+            max-width: 90%;
+        }
+
+        /* Stats Grid */
+        .stats-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+            gap: 20px; 
+            margin-top: 32px; 
+        }
+        .stat-card {
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            padding: 28px; 
+            border-radius: 28px; 
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+        }
+        .stat-card:hover { 
+            transform: translateY(-10px); 
+            background: white; 
+            box-shadow: 0 20px 40px rgba(61,139,94,0.1); 
+            border-color: var(--eco-green-light);
+        }
+        .stat-icon { font-size: 2rem; margin-bottom: 15px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.05)); }
+        .stat-label { 
+            display: block; 
+            color: var(--text-sub); 
+            font-size: 0.8rem; 
+            font-weight: 800; 
+            text-transform: uppercase; 
+            letter-spacing: 0.15em; 
+            margin-bottom: 8px; 
+        }
+        .stat-value { 
+            font-family: 'Nunito', sans-serif; 
+            font-size: 1.6rem; 
+            font-weight: 900; 
+            color: var(--text-main); 
+            letter-spacing: -0.5px;
+        }
+        .detail-section {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 32px;
+            padding: 40px; 
+            margin-bottom: 30px;
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.04), inset 0 0 20px rgba(255,255,255,0.5);
+            animation: slideUpLarge 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .detail-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.07);
+        }
+        
+        .detail-section h3 {
+            font-family: 'Nunito', sans-serif; 
+            font-size: 1.5rem; 
+            font-weight: 900;
+            color: var(--text-main); 
+            margin: 0 0 30px; 
+            display: flex; 
+            align-items: center; 
+            gap: 15px;
+            letter-spacing: -0.5px;
+        }
+        
+        .icon-dot { 
+            width: 48px; 
+            height: 48px; 
+            border-radius: 16px; 
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 1.4rem;
+            background: white;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.05);
+            position: relative;
+        }
+        .icon-dot::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            background: inherit;
+            filter: blur(10px);
+            opacity: 0.3;
+            z-index: -1;
+        }
+
+        .detail-row { 
+            display: flex; 
+            align-items: center; 
+            padding: 24px 28px; 
+            background: rgba(255,255,255,0.6);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.8);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+            transition: all 0.3s ease; 
+            margin-bottom: 12px;
+        }
+        .detail-row:hover { 
+            background: white; 
+            box-shadow: 0 10px 25px rgba(61,139,94,0.08); 
+            transform: scale(1.02);
+        }
+        
+        .highlight-box {
+            padding: 28px;
+            border-radius: 24px;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+            position: relative;
+        }
+        .highlight-box.amber { background: linear-gradient(135deg, #fffcf0, #fff7e6); border-color: #ffe58f; }
+        .highlight-box.blue  { background: linear-gradient(135deg, #f0f7ff, #e6f4ff); border-color: #91caff; }
+        .highlight-box.green { background: linear-gradient(135deg, #f6ffed, #f0f9eb); border-color: #b7eb8f; }
+        .highlight-box.orange { background: linear-gradient(135deg, #fff7e6, #fff2e8); border-color: #ffd591; }
+        
+        .highlight-box:hover { transform: translateY(-3px); box-shadow: 0 12px 24px rgba(0,0,0,0.04); }
+        
+        .roi-box {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            padding: 30px;
+            background: white;
+            border-radius: 28px;
+            border: 1px solid rgba(0,0,0,0.03);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.03);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .roi-box:hover { transform: translateY(-8px); box-shadow: 0 25px 50px rgba(0,0,0,0.06); }
+        .roi-icon { font-size: 3rem; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1)); }
+        .roi-text h4 { font-family: 'Nunito', sans-serif; font-weight: 800; margin: 0 0 4px; color: var(--text-main); }
+        .roi-text p { margin: 0; font-weight: 700; font-size: 1.15rem; color: var(--eco-green); }
+
+        .eco-expand-btn {
+            width: 100%;
+            background: white; 
+            border: 2px solid var(--eco-green); 
+            color: var(--eco-green);
+            padding: 10px 24px; 
+            border-radius: 14px; 
+            font-family: 'Nunito', sans-serif;
+            font-weight: 900; 
+            font-size: 0.9rem; 
+            cursor: pointer; 
+            transition: var(--transition-smooth);
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            gap: 10px; 
+            margin-top: 24px;
+            box-shadow: 0 4px 0 var(--eco-green);
+        }
+        .eco-expand-btn:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 6px 0 var(--eco-green-deep);
+            background: var(--eco-green); 
+            color: white;
+        }
+        .eco-expand-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 0 0 var(--eco-green);
+        }
+        .eco-expand-btn.active-btn {
+            background: var(--eco-green-deep);
+            color: white;
+            box-shadow: 0 4px 0 #1a3a2a;
+        }
+
+        /* Expansion Panel Redesign */
+        .eco-expand-panel {
+            background: white; 
+            border: 1px solid #e2ddd4; 
+            border-radius: 24px;
+            padding: 40px; 
+            margin-top: 24px; 
+            box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+            position: relative;
+        }
+        .eco-expand-panel::after {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 10px solid #e2ddd4;
+        }
+
+        @keyframes panelEntrance {
+            from { opacity: 0; transform: translateY(20px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .eco-expand-panel {
+            animation: panelEntrance 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .expand-panel-header {
+            font-family: 'Nunito', sans-serif; 
+            font-weight: 900; 
+            font-size: 1.2rem;
+            color: var(--eco-green); 
+            border-bottom: 1.5px solid #f0f0f0; 
+            padding-bottom: 16px;
+            margin-bottom: 24px; 
+            display: flex; 
+            align-items: center; 
+            gap: 12px;
+        }
+
+        .report-paragraph { 
+            margin-bottom: 18px; 
+            font-size: 1rem; 
+            color: #4a5a4b; 
+            line-height: 1.75; 
+        }
+        .report-bullet { 
+            display: flex; 
+            gap: 14px; 
+            margin-bottom: 12px; 
+            font-size: 1rem; 
+            color: #4a5a4b;
+            padding: 12px 18px;
+            background: #f9faf9;
+            border-radius: 12px;
+            border-left: 4px solid var(--eco-green-light);
+            transition: var(--transition-smooth);
+        }
+        .report-bullet:hover { transform: translateX(5px); background: #f2f6f2; }
+        .report-bullet span { display: none; } /* Dot not needed with border-left */
+
+        /* Sustainability Scores Styling */
+        .scores-section {
+            margin-top: 40px;
+            padding: 30px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            animation: slideUpLarge 1.2s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+        }
+        .scores-title {
+            font-family: 'Nunito', sans-serif;
+            font-weight: 900;
+            font-size: 1.25rem;
+            color: var(--text-main);
+            margin-bottom: 32px;
+            text-align: center;
+            letter-spacing: -0.01em;
+        }
+        .score-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+        .score-name {
+            width: 100px;
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: var(--text-sub);
+            flex-shrink: 0;
+        }
+        .score-track {
+            flex: 1;
+            height: 12px;
+            background: #e2ddd4;
+            border-radius: 99px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .score-fill {
+            height: 100%;
+            border-radius: 99px;
+            transition: width 1.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+        }
+        /* Specific Bar Colors */
+        .score-fill.solar { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+        .score-fill.wind { background: linear-gradient(90deg, #3d8b5e, #5eab7d); }
+        .score-fill.hydro { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+        .score-fill.biomass { background: linear-gradient(90deg, #8b4513, #a0522d); }
+        .score-fill.geothermal { background: linear-gradient(90deg, #dc2626, #ef4444); }
+        .score-fill.tidal { background: linear-gradient(90deg, #0ea5e9, #38bdf8); }
+        .score-fill.default { background: linear-gradient(90deg, #6b7280, #9ca3af); }
+
+        .score-pct {
+            width: 50px;
+            font-size: 0.95rem;
+            font-weight: 900;
+            color: var(--eco-green);
+            text-align: right;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 600px) {
+            .result-hero { padding: 24px; }
+            .result-hero-title { font-size: 1.7rem; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .detail-row { flex-direction: column; align-items: flex-start; gap: 4px; }
+            .detail-key { width: 100%; }
+        }
+
+        .currency-mini-btn {
+            background: var(--accent-soft);
+            border: 1px solid var(--border-soft);
+            color: var(--accent);
+            border-radius: 6px;
+            padding: 2px 8px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            cursor: pointer;
+            margin-left: 8px;
+            transition: var(--transition-smooth);
+            vertical-align: middle;
+        }
+        .currency-mini-btn:hover {
+            background: var(--accent);
+            color: white;
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+<div class="result-page">
+
+    <!-- Top bar -->
+    <div class="result-topbar">
+        <a href="/" class="btn-back">← Back to Chat</a>
+        <div class="result-brand">Eco-AI</div>
+    </div>
+
+    <!-- ══ Hero card ══ -->
+    <div class="result-hero">
+        <div class="result-hero-meta">
+            <div class="hero-label-group">
+                <p>Your Top Eco-AI Recommendation</p>
+                <h1 class="result-hero-title" id="resTitle">Analysing…</h1>
+                <p class="result-hero-subtype" id="resSubType"></p>
+            </div>
+            <div class="hero-badges">
+                <span class="energy-badge" id="resBadge">Loading…</span>
+                <span class="confidence-badge" id="resConfidence" style="display:none;"></span>
+            </div>
+        </div>
+        <img id="resImg" class="result-img hidden" src="" alt="Recommended energy solution" />
+        <p class="result-desc" id="resDesc"></p>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">💰</div>
+                <span class="stat-label">Estimated Cost 
+                    <button id="convertCurrencyBtn" class="currency-mini-btn" title="Toggle ₹ / $">⇄ $</button>
+                </span>
+                <span class="stat-value" id="resCost">—</span>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📅</div>
+                <span class="stat-label">Payback Period</span>
+                <span class="stat-value" id="resPayback">—</span>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📐</div>
+                <span class="stat-label">Area Required</span>
+                <span class="stat-value" id="resArea">—</span>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🎯</div>
+                <span class="stat-label">AI Confidence</span>
+                <span class="stat-value" id="resConfidenceStat">—</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══ Installation Details ══ -->
+    <div class="detail-section" id="sec-installation">
+        <h3>
+            <span class="icon-dot" style="background:rgba(61,139,94,0.12);">📍</span>
+            Installation Details
+        </h3>
+        <div class="detail-list">
+            <div class="detail-row">
+                <span class="detail-key">Ideal Location</span>
+                <span class="detail-val" id="resLocation">—</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-key">Space Needed</span>
+                <span class="detail-val summary-truncate" id="resAreaDetail">—</span>
+            </div>
+        </div>
+        <button class="eco-expand-btn" onclick="expandSection('installation', this)">
+            <span class="golden-leaf">🌿</span> View Full Installation Place & Logistics Guide
+        </button>
+        <div id="expand-installation"></div>
+    </div>
+
+    <!-- ══ Safety & Maintenance ══ -->
+    <div class="detail-section" id="sec-safety">
+        <h3>
+            <span class="icon-dot" style="background:rgba(217,89,89,0.1);">⚠️</span>
+            Safety & Maintenance
+        </h3>
+        <div style="display:flex;flex-direction:column;gap:15px;">
+            <div class="highlight-box amber" style="border-radius:16px; padding:20px; box-shadow: 0 4px 12px rgba(245,158,11,0.1);">
+                <strong>⚠️ Safety Precaution</strong>
+                <span id="resPrecaution" class="summary-truncate" style="font-weight:600; font-size:1.05rem;">—</span>
+            </div>
+            <div class="highlight-box blue" style="border-radius:16px; padding:20px; box-shadow: 0 4px 12px rgba(59,130,246,0.1);">
+                <strong>🌿 Ongoing Evergreen Care</strong>
+                <span id="resCare" class="summary-truncate" style="font-weight:600; font-size:1.05rem;">—</span>
+            </div>
+        </div>
+        <button class="eco-expand-btn" onclick="expandSection('safety', this)">
+            <span class="golden-leaf">🌿</span> View Complete Precaution & Care Advice
+        </button>
+        <div id="expand-safety"></div>
+    </div>
+
+    <!-- ══ Environmental Impact ══ -->
+    <div class="detail-section" id="sec-environment">
+        <h3>
+            <span class="icon-dot" style="background:rgba(61,139,94,0.12);">🌍</span>
+            Environmental Impact
+        </h3>
+        <div class="highlight-box green">
+            <strong>Impact Statement</strong>
+            <span id="resImpact">—</span>
+        </div>
+        <button class="eco-expand-btn" onclick="expandSection('environment', this)">
+            <span class="golden-leaf">🌿</span> View Complete Environmental Impact Analysis
+        </button>
+        <div id="expand-environment"></div>
+    </div>
+
+    <!-- ══ Return on Investment ══ -->
+    <div class="detail-section" id="sec-roi">
+        <h3>
+            <span class="icon-dot" style="background:rgba(224,123,57,0.12);">💰</span>
+            Return on Investment
+        </h3>
+        <div class="roi-box">
+            <div class="roi-icon">📈</div>
+            <div class="roi-text">
+                <h4>Financial Outlook</h4>
+                <p id="resROI">—</p>
+            </div>
+        </div>
+        <button class="eco-expand-btn" onclick="expandSection('roi', this)">
+            <span class="golden-leaf">🌿</span> View Complete 10-Year Financial Projection
+        </button>
+        <div id="expand-roi"></div>
+    </div>
+
+    <!-- ══ Government Plan & Subsidy ══ -->
+    <div class="detail-section" id="sec-subsidy">
+        <h3>
+            <span class="icon-dot" style="background:rgba(61,139,94,0.12);">🏛️</span>
+            Government Plan & Subsidy
+        </h3>
+        <div class="highlight-box green" style="border-radius:16px; padding:20px; box-shadow: 0 4px 12px rgba(61,139,94,0.1);">
+            <strong>📜 Subsidy Details</strong>
+            <span id="resSubsidy" style="font-weight:600; font-size:1.05rem;">—</span>
+        </div>
+        <button class="eco-expand-btn" onclick="expandSection('subsidy', this)">
+            <span class="golden-leaf">🌿</span> View Complete Policy & Subsidy Guide
+        </button>
+        <div id="expand-subsidy"></div>
+    </div>
+
+    <!-- ══ Suitability Scores ══ -->
+    <div class="scores-section" id="scoresSection" style="display:none;">
+        <p class="scores-title">Suitability Scores — All Energy Sources</p>
+        <div id="scoresBars"></div>
+    </div>
+
+    <!-- Spacer for better visual flow -->
+    <div style="height: 20px;"></div>
+
+    <!-- ══ Q&A Section ══ -->
+    <div class="qa-section" id="qaSection" style="margin-top: 60px;">
+        <h2 style="text-align: center; margin-bottom: 30px; font-family: 'Nunito', sans-serif; font-weight: 900; color: var(--text-main);">
+            <span class="icon-dot" style="background:rgba(61,139,94,0.1);">🌿</span>
+            Ask Eco-AI Anything
+        </h2>
+        <div class="qa-container">
+            <div id="qaBox" class="qa-messages">
+                <div class="qa-bot-msg intro-msg">
+                    <p>I have analyzed your environment for <strong><span id="qaBotEnergy">recommended energy system</span></strong>.</p>
+                    <p>Is there anything specific you'd like to know about this setup?</p>
+                </div>
+            </div>
+            <div class="qa-input-area">
+                <input type="text" id="qaInput" placeholder="Ask about maintenance, specific brands, or ROI..." />
+                <button id="qaSendBtn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // ── Energy data from sessionStorage ────────────────────────────────────
+    const dataStr = sessionStorage.getItem('eco_ai_result');
+    if (!dataStr) { window.location.href = '/'; }
+    const data = JSON.parse(dataStr || '{}');
+
+    // ── Helper: Professional Report Formatter ────────────────────────────────
+    function formatReportText(text) {
+        if (!text) return '';
+        let lines = text.trim().split('\n');
+        let html = '';
+        
+        lines.forEach(line => {
+            let clean = line.trim();
+            if (!clean) return;
+            
+            // Handle bold text: **text** -> <strong>text</strong>
+            clean = clean.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            
+            if (clean.startsWith('•') || clean.startsWith('-')) {
+                const content = clean.startsWith('•') ? clean.substring(1).trim() : clean.substring(1).trim();
+                html += `<div class="report-bullet"><span>•</span> ${content}</div>`;
+            } else if (clean.match(/^\d+\./)) {
+                // Handle numbered lists
+                const content = clean.replace(/^\d+\.\s*/, '');
+                html += `<div class="report-bullet"><span style="color:#e07b39; min-width:20px;">${clean.split('.')[0]}.</span> ${content}</div>`;
+            } else {
+                html += `<div class="report-paragraph">${clean}</div>`;
+            }
+        });
+        
+        return html;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // ── Populate static fields ────────────────────────────────────
+        document.getElementById('resBadge').textContent         = data.energy_type      || 'Recommended';
+        document.getElementById('resTitle').textContent         = data.title            || 'Renewable Energy';
+        document.getElementById('resSubType').textContent       = data.sub_type         || '';
+        document.getElementById('resDesc').textContent          = data.description      || '';
+        document.getElementById('resCost').textContent          = data.estimated_cost   || '—';
+        document.getElementById('resPayback').textContent       = data.payback_period   || '—';
+        document.getElementById('resArea').textContent          = (data.area_required   || '—').split('.')[0];
+        document.getElementById('resImpact').textContent        = data.environmental_impact || '—';
+        document.getElementById('resPrecaution').textContent    = data.precaution       || '—';
+        document.getElementById('resCare').textContent          = data.care             || '—';
+        document.getElementById('resLocation').textContent      = data.installation_location || '—';
+        document.getElementById('resAreaDetail').textContent    = data.area_required    || '—';
+        document.getElementById('resROI').textContent           = data.roi              || '—';
+        document.getElementById('resSubsidy').textContent       = data.government_subsidy || '—';
+        document.getElementById('qaBotEnergy').textContent      = data.title            || 'recommended energy system';
+
+        if (data.confidence) {
+            const cb = document.getElementById('resConfidence');
+            cb.textContent = `${data.confidence}% Match`;
+            cb.style.display = '';
+            document.getElementById('resConfidenceStat').textContent = `${data.confidence}%`;
+        }
+
+        // ── Hero image & Evergreen Climate Theme ────────────────────────────
+        const lt = (data.energy_type || '').toLowerCase();
+        const temp = data.temperature;
+        
+        // Evergreen logic: Restoring impactful local images
+        let imgFile = 'solar.png';
+        if      (lt.includes('solar'))                             imgFile = (temp < 10) ? 'solar_cold.png' : 'solar.png';
+        else if (lt.includes('wind'))                              imgFile = (temp < 10) ? 'wind_cold.png' : 'wind.png';
+        else if (lt.includes('hydro') || lt.includes('micro'))     imgFile = (temp < 10) ? 'hydro_cold.png' : 'hydro.png';
+        else if (lt.includes('geothermal'))                        imgFile = 'geothermal.png';
+        else if (lt.includes('biomass') || lt.includes('biogas'))  imgFile = 'biomass.png';
+        else if (lt.includes('tidal'))                             imgFile = 'tidal.png';
+
+        // Fetch high-quality local image
+        const img = document.getElementById('resImg');
+        img.src = `/static/img/${imgFile}`;
+        img.style.objectFit = 'cover';
+        img.classList.remove('hidden');
+
+        // Apply theme effects if it's actually cold, but keep the image "evergreen"
+        if (temp !== undefined && temp < 2) {
+             document.body.classList.add('cold-theme');
+             // Add a subtle frost glass overlay to the evergreen image to look "frosty but lush"
+             img.style.filter = 'saturate(1.2) contrast(1.1) brightness(1.05)';
+        }
+
+        // ── Score bars ────────────────────────────────────────────────
+        const scores = data.all_scores || {};
+        if (Object.keys(scores).length > 0) {
+            const section  = document.getElementById('scoresSection');
+            const barsDiv  = document.getElementById('scoresBars');
+            section.style.display = '';
+            const colorMap = { Solar:'solar', Wind:'wind', Hydro:'hydro', Biomass:'biomass', Geothermal:'geothermal', Tidal:'tidal' };
+            Object.entries(scores).sort((a,b) => b[1]-a[1]).forEach(([name, pct]) => {
+                const row = document.createElement('div');
+                row.className = 'score-row';
+                row.innerHTML = `
+                    <span class="score-name">${name}</span>
+                    <div class="score-track"><div class="score-fill ${colorMap[name]||'default'}" data-pct="${pct}" style="width:0;"></div></div>
+                    <span class="score-pct">${pct}%</span>`;
+                barsDiv.appendChild(row);
+            });
+            setTimeout(() => {
+                barsDiv.querySelectorAll('.score-fill').forEach(el => { el.style.width = el.getAttribute('data-pct') + '%'; });
+            }, 120);
+        }
+
+        document.getElementById('qaInput').addEventListener('keydown', e => {
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendQAMessage(); }
+        });
+        document.getElementById('qaSendBtn').addEventListener('click', sendQAMessage);
+    });
+
+    // ── Gemini Expand section ───────────────────────────────────────────────
+    function expandSection(topic, btn) {
+        const panelId = 'expand-' + topic;
+        const panel   = document.getElementById(panelId);
+
+        if (panel.querySelector('.eco-expand-panel')) {
+            panel.innerHTML = '';
+            if (btn.hasAttribute('data-original-text')) {
+                btn.innerHTML = btn.getAttribute('data-original-text');
+            }
+            btn.classList.remove('active-btn');
+            return;
+        }
+
+        if (!btn.hasAttribute('data-original-text')) {
+            btn.setAttribute('data-original-text', btn.innerHTML);
+        }
+
+        const localMap = {
+            installation: data.installation_guide,
+            safety:       data.safety_plan,
+            environment:  data.detailed_impact,
+            roi:          data.financial_roi,
+            subsidy:      data.government_subsidy_detailed
+        };
+
+        const content = localMap[topic];
+        if (content) {
+            renderExpandedPanel(topic, panel, content, btn);
+        } else {
+            fetchFromServer(topic, panel, btn);
+        }
+    }
+
+    function renderExpandedPanel(topic, panel, content, btn) {
+        const expandPanel = document.createElement('div');
+        expandPanel.className = 'eco-expand-panel';
+        expandPanel.innerHTML = `
+            <div class="expand-panel-header">
+                <span class="golden-leaf">🌿</span> Eco-AI — Detailed Analysis
+            </div>
+            <div class="expand-panel-text">${formatReportText(content)}</div>`;
+        panel.appendChild(expandPanel);
+        
+        btn.innerHTML = '<span class="golden-leaf">🌿</span> Hide Details';
+        btn.classList.add('active-btn');
+        expandPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function fetchFromServer(topic, panel, btn) {
+        btn.classList.add('loading');
+        btn.innerHTML = '<span class="golden-leaf">🌿</span> Generating…';
+
+        const expandPanel = document.createElement('div');
+        expandPanel.className = 'eco-expand-panel';
+        expandPanel.innerHTML = `
+            <div class="expand-panel-header">
+                <span class="golden-leaf">🌿</span> Eco-AI — Detailed Analysis (Generating…)
+            </div>
+            <div class="expand-panel-text" id="ep-text-${topic}"></div>`;
+        panel.appendChild(expandPanel);
+
+        const textEl = document.getElementById(`ep-text-${topic}`);
+        let fullText = '';
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/api/expand', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+
+        xhr.onreadystatechange = () => {
+            if (xhr.readyState >= 3) {
+                const lines = xhr.responseText.split('\n');
+                lines.forEach(line => {
+                    if (!line.startsWith('data: ')) return;
+                    try {
+                        const p = JSON.parse(line.slice(6));
+                        if (p.text) fullText += p.text;
+                        if (p.done || p.error) {
+                            btn.classList.remove('loading');
+                            btn.innerHTML = '<span class="golden-leaf">🌿</span> Hide Details';
+                        }
+                    } catch {}
+                });
+                textEl.innerHTML = formatReportText(fullText);
+            }
+        };
+        xhr.send(JSON.stringify({ topic, energyData: data }));
+    }
+
+    // ── Currency Conversion Logic ──────────────────────────────
+    let isUSD = false;
+    const exchangeRate = 83.0;
+    const originalCostStr = data.estimated_cost || '—';
+    const originalROIStr = data.roi || '—';
+
+    function toggleCurrency() {
+        isUSD = !isUSD;
+        const btn = document.getElementById('convertCurrencyBtn');
+        const costEl = document.getElementById('resCost');
+        const roiEl = document.getElementById('resROI');
+
+        if (isUSD) {
+            btn.textContent = '⇄ ₹';
+            costEl.textContent = originalCostStr.replace(/Rs\.\s*([\d,]+(\.\d+)?)(L)?/g, (match, num, dot, isLakh) => {
+                let val = parseFloat(num.replace(/,/g, ''));
+                if (isLakh) val *= 100000;
+                return '$' + (val / exchangeRate).toLocaleString(undefined, {maximumFractionDigits: 0});
+            });
+            roiEl.textContent = originalROIStr.replace(/Rs\.\s*([\d,]+(\.\d+)?)(L)?/g, (match, num, dot, isLakh) => {
+                let val = parseFloat(num.replace(/,/g, ''));
+                if (isLakh) val *= 100000;
+                return '$' + (val / exchangeRate).toLocaleString(undefined, {maximumFractionDigits: 0});
+            });
+        } else {
+            btn.textContent = '⇄ $';
+            costEl.textContent = originalCostStr;
+            roiEl.textContent = originalROIStr;
+        }
+    }
+
+    document.getElementById('convertCurrencyBtn').addEventListener('click', toggleCurrency);
+
+    // ── Result page Q&A chat ────────────────────────────────────────────────
+    function sendQAMessage() {
+        const qaInput   = document.getElementById('qaInput');
+        const qaBox     = document.getElementById('qaBox');
+        const qaSendBtn  = document.getElementById('qaSendBtn');
+        const question   = qaInput.value.trim();
+        if (!question) return;
+
+        const userMsg = document.createElement('div');
+        userMsg.className = 'qa-user-msg';
+        userMsg.innerHTML = `<span>${question}</span>`;
+        qaBox.appendChild(userMsg);
+        qaInput.value = '';
+        qaSendBtn.disabled = true;
+        qaBox.scrollTop = qaBox.scrollHeight;
+
+        const botMsg = document.createElement('div');
+        botMsg.className = 'qa-bot-msg';
+        botMsg.innerHTML = `<div class="reply-text">Thinking…</div>`;
+        qaBox.appendChild(botMsg);
+        qaBox.scrollTop = qaBox.scrollHeight;
+
+        let fullText = '';
+        let lastIndex = 0;
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/api/expand', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+
+        xhr.onreadystatechange = () => {
+            if (xhr.readyState >= 3) {
+                const newText = xhr.responseText.substring(lastIndex);
+                const lines = newText.split('\n');
+                lastIndex = xhr.responseText.lastIndexOf('\n') + 1;
+
+                lines.forEach(line => {
+                    if (!line.startsWith('data: ')) return;
+                    try {
+                        const p = JSON.parse(line.slice(6));
+                        if (p.text) fullText += p.text;
+                        if (p.done || p.error) {
+                            botMsg.querySelector('.reply-text').innerHTML = formatReportText(fullText);
+                            qaSendBtn.disabled = false;
+                            qaInput.focus();
+                        }
+                    } catch {}
+                });
+                botMsg.querySelector('.reply-text').innerHTML = formatReportText(fullText);
+                qaBox.scrollTop = qaBox.scrollHeight;
+            }
+        };
+
+        xhr.send(JSON.stringify({ topic: 'question', energyData: data, question }));
+    }
+</script>
+</body>
+</html>

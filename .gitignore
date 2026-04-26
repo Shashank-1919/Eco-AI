@@ -1,0 +1,37 @@
+# Environment variables
+.env
+
+# Virtual environment
+.venv/
+env/
+venv/
+ENV/
+
+# Node dependencies
+node_modules/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Training Data and Model Weights
+*.csv
+*.joblib
+*.keras
+!model/qa/responses.json
+
+# Text files (Ignore all except requirements.txt)
+*.txt
+!requirements.txt
+
+# Temporary/Debug files
+scratch/
+err.txt
+out.txt
+test_output.json
+
+# System files
+.DS_Store
+Thumbs.db
+desktop.ini

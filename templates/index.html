@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eco-AI — Your Renewable Energy Advisor</title>
+    <meta name="description"
+        content="Chat with Eco-AI, your personal renewable energy advisor powered by fuzzy logic intelligence.">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Lato:wght@300;400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body>
+    <div class="app-container">
+
+        <!-- ── Sidebar ── -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo-icon">🌿</div>
+                <h2><span class="eco-brand-text">Eco-AI</span></h2>
+            </div>
+
+            <button id="newChatBtn" class="new-chat-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+                New Chat
+            </button>
+            <!-- Bulk Chat Management -->
+            <div id="bulkActions" class="bulk-actions hidden">
+                <button id="selectAllBtn" class="bulk-btn select-all">
+                    Select All
+                </button>
+                <button id="deleteSelectedBtn" class="bulk-btn delete">
+                    Delete Selected
+                </button>
+                <button id="cancelSelectBtn" class="bulk-btn cancel">
+                    Cancel
+                </button>
+            </div>
+            <div id="sidebarHistory" class="sidebar-history">
+                <p class="history-label">Previous Chats</p>
+                <!-- Items populated by JS -->
+            </div>
+
+        </aside>
+
+        <!-- ── Main Chat Area ── -->
+        <main class="chat-main">
+
+            <!-- Floating Welcome Header -->
+            <div class="welcome-screen" id="welcomeScreen">
+                <h1>
+                    <span class="welcome-text">Hi, Welcome to </span><span class="eco-brand-text">Eco-AI</span><span
+                        class="blinking-mark">!</span>
+                </h1>
+                <p class="welcome-text-sub">Expert Renewable Energy Advisor</p>
+            </div>
+
+            <!-- Messages -->
+            <div class="chat-container" id="chatContainer"></div>
+
+            <!-- Input Area -->
+            <div class="input-container">
+
+                <div class="quick-options hidden" id="quickOptions">
+                    <button class="preset-btn">Sunny & High Budget</button>
+                    <button class="preset-btn">Windy Coastal Area</button>
+                    <button class="preset-btn">Micro-Hydro Stream</button>
+                    <button class="preset-btn">Geothermal Heating</button>
+                    <button class="preset-btn">Limited Budget</button>
+                </div>
+
+                <!-- Fuzzy selector rows -->
+                <div class="fuzzy-options-container">
+
+                    <div class="fuzzy-options-row">
+                        <span class="fuzzy-row-label">Temperature</span>
+                        <div class="fuzzy-btn-group">
+                            <button type="button" class="preset-btn fuzzy-btn" data-type="temp" data-min="0"
+                                data-max="5">Very Cold</button>
+                            <button type="button" class="preset-btn fuzzy-btn" data-type="temp" data-min="6"
+                                data-max="15">Cold</button>
+                            <button type="button" class="preset-btn fuzzy-btn" data-type="temp" data-min="16"
+                                data-max="25">Moderate</button>
+                            <button type="button" class="preset-btn fuzzy-btn" data-type="temp" data-min="26"
+                                data-max="35">Hot</button>
+                            <button type="button" class="preset-btn fuzzy-btn" data-type="temp" data-min="36"
+                                data-max="50">Very Hot</button>
+                        </div>
+                    </div>
+
+                    <div class="fuzzy-options-row">
+                        <span class="fuzzy-row-label">Humidity</span>
+                        <div class="fuzzy-btn-group">
+                            <button type="button" class="preset-btn fuzzy-btn" data-type="hum" data-min="0"
+                                data-max="20">Very Dry</button>
+                            <button type="button" class="preset-btn fuzzy-btn" data-type="hum" data-min="21"
+                                data-max="40">Dry</button>
+                            <button type="button" class="preset-btn fuzzy-btn" data-type="hum" data-min="41"
+                                data-max="60">Optimal</button>
+                            <button type="button" class="preset-btn fuzzy-btn" data-type="hum" data-min="61"
+                                data-max="80">Humid</button>
+                            <button type="button" class="preset-btn fuzzy-btn" data-type="hum" data-min="81"
+                                data-max="100">Very Humid</button>
+                        </div>
+                    </div>
+
+                    <div class="fuzzy-options-row">
+                        <span class="fuzzy-row-label">Wind</span>
+                        <div class="fuzzy-btn-group">
+                            <button type="button" class="preset-btn fuzzy-btn" data-type="wind" data-min="0"
+                                data-max="2">Calm</button>
+                            <button type="button" class="preset-btn fuzzy-btn" data-type="wind" data-min="2"
+                                data-max="5">Light</button>
+                            <button type="button" class="preset-btn fuzzy-btn" data-type="wind" data-min="5"
+                                data-max="8">Moderate</button>
+                            <button type="button" class="preset-btn fuzzy-btn" data-type="wind" data-min="8"
+                                data-max="12">Strong</button>
+                            <button type="button" class="preset-btn fuzzy-btn" data-type="wind" data-min="12"
+                                data-max="15">Very Strong</button>
+                        </div>
+                    </div>
+
+                    <div class="fuzzy-options-row">
+                        <span class="fuzzy-row-label">Budget</span>
+                        <div class="fuzzy-btn-group">
+                            <button type="button" class="preset-btn fuzzy-btn" data-type="budget" data-min="0"
+                                data-max="100000">Low</button>
+                            <button type="button" class="preset-btn fuzzy-btn" data-type="budget" data-min="100001"
+                                data-max="400000">Mid</button>
+                            <button type="button" class="preset-btn fuzzy-btn" data-type="budget" data-min="400001"
+                                data-max="800000">High</button>
+                            <button type="button" class="preset-btn fuzzy-btn" data-type="budget" data-min="800001"
+                                data-max="1000000">Ultra</button>
+                        </div>
+                        <div class="currency-toggle-wrapper">
+                            <span class="curr-label">₹</span>
+                            <label class="switch">
+                                <input type="checkbox" id="currencyToggle">
+                                <span class="slider round"></span>
+                            </label>
+                            <span class="curr-label">$</span>
+                        </div>
+                    </div>
+                </div>
+
+                <form id="chatForm" class="chat-input-wrapper">
+                    <button type="button" class="icon-btn" id="locationBtn" title="Use Current Location">
+                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                    </button>
+                    <button type="button" class="icon-btn" id="optionsBtn" title="Quick Options">
+                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path
+                                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+                            </path>
+                        </svg>
+                    </button>
+                    <button type="button" class="icon-btn" id="micBtn" title="Use Voice">
+                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                            <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                            <line x1="12" y1="19" x2="12" y2="23"></line>
+                            <line x1="8" y1="23" x2="16" y2="23"></line>
+                        </svg>
+                    </button>
+
+                    <input type="text" id="chatInput" placeholder="Ask about renewable energy for your area…"
+                        autocomplete="off">
+
+                    <button type="submit" class="icon-btn send-btn" id="sendBtn" title="Send Message">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+                        </svg>
+                    </button>
+                </form>
+
+                <div class="input-footer">
+                    <span class="eco-brand-text" style="font-weight:700;">Eco-AI</span> may make mistakes — always
+                    verify cost estimates with a qualified installer.
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/static/js/main.js?v=9"></script>
+</body>
+
+</html>
