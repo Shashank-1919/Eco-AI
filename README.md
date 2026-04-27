@@ -45,7 +45,6 @@ Eco-AI is a professional, bilingual (English & Hindi) conversational assistant d
 ### 1. Prerequisites
 - Node.js (v14+)
 - Python (v3.8+)
-- Gemini API Key
 
 ### 2. Environment Configuration
 Create a `.env` file in the root directory (refer to `.env.example`):
