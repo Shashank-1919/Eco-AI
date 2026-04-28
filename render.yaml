@@ -6,7 +6,7 @@ services:
     autoDeploy: true
     envVars:
       - key: MONGODB_URI
-        sync: false # Requires manual entry in Render Dashboard
+        value: mongodb+srv://shashankpandit1919:shashank%401919@cluster0.zisnna9.mongodb.net/ecoai?retryWrites=true&w=majority&appName=Cluster0
       - key: JWT_SECRET
         generateValue: true # Render will generate a strong secret
       - key: NODE_ENV
