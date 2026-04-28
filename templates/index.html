@@ -52,6 +52,7 @@
         <!-- ── Main Chat Area ── -->
         <main class="chat-main">
 
+
             <!-- Floating Welcome Header -->
             <div class="welcome-screen" id="welcomeScreen">
                 <h1>
@@ -61,8 +62,16 @@
                 <p class="welcome-text-sub">Expert Renewable Energy Advisor</p>
             </div>
 
+            <!-- Top Fade Overlay -->
+            <div class="chat-top-fade"></div>
+
             <!-- Messages -->
             <div class="chat-container" id="chatContainer"></div>
+
+            <!-- Fade Overlay -->
+            <div class="chat-fade-overlay"></div>
+
+
 
             <!-- Input Area -->
             <div class="input-container">
@@ -195,6 +204,38 @@
     </div>
 
     <script src="/static/js/main.js?v=9"></script>
+
+    <!-- ── Profile Avatar + Dropdown (fixed top-right) ── -->
+    <div class="profile-wrapper" id="profileWrapper">
+        <button class="avatar-trigger" id="avatarBtn" title="My Account">
+            <span class="avatar-circle" id="avatarInitial">U</span>
+            <span class="avatar-label" id="avatarLabel">Account</span>
+            <svg class="avatar-caret" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+
+        <div class="profile-dropdown" id="profileDropdown">
+            <!-- Header -->
+            <div class="pd-header">
+                <div class="pd-avatar" id="dropdownAvatar">U</div>
+                <div class="pd-info">
+                    <p class="pd-name" id="profileName">User</p>
+                    <p class="pd-email" id="profileEmail">—</p>
+                </div>
+            </div>
+
+            <!-- Divider -->
+            <div class="pd-divider"></div>
+
+            <!-- Actions -->
+            <div class="pd-actions">
+                <button class="pd-action-btn pd-logout" id="logoutBtn">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                    Sign Out
+                </button>
+            </div>
+        </div>
+    </div>
+
 </body>
 
 </html>

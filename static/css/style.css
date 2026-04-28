@@ -289,8 +289,33 @@ body {
 .chat-container {
     flex: 1;
     overflow-y: auto;
-    padding-bottom: 220px;
+    padding-bottom: 160px;
+    /* Space for messages to scroll behind input */
     margin-top: 70px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-soft) transparent;
+}
+
+.chat-top-fade {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 80px;
+    background: linear-gradient(to bottom, var(--bg-main) 10%, transparent 100%);
+    pointer-events: none;
+    z-index: 60;
+}
+
+.chat-fade-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 140px;
+    background: linear-gradient(to top, var(--bg-main) 35%, rgba(245, 242, 235, 0.85) 65%, transparent 100%);
+    pointer-events: none;
+    z-index: 60;
 }
 
 .chat-container::-webkit-scrollbar {
@@ -398,7 +423,7 @@ body {
     width: 100%;
     padding: 0 12%;
     transition: all 0.55s cubic-bezier(0.25, 1, 0.5, 1);
-    z-index: 50;
+    z-index: 70;
     pointer-events: none;
 }
 
@@ -1610,4 +1635,371 @@ body {
     color: var(--accent);
     text-transform: uppercase;
     letter-spacing: 0.08em;
+}
+
+/* --------------------------------------------------------------
+   PROFILE AVATAR + DROPDOWN
+-------------------------------------------------------------- */
+.profile-wrapper {
+    position: absolute;
+    top: 18px;
+    right: 24px;
+    z-index: 2000;
+}
+
+/* -- Round avatar button ------------------------------------- */
+.avatar-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2.5px solid var(--accent);
+    background: linear-gradient(135deg, var(--accent), var(--accent-light));
+    color: white;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    font-weight: 900;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 14px rgba(61, 139, 94, 0.35);
+    letter-spacing: 0;
+}
+
+.avatar-btn:hover {
+    transform: scale(1.08);
+    box-shadow: 0 6px 20px rgba(61, 139, 94, 0.45);
+}
+
+/* -- Dropdown panel ------------------------------------------ */
+.profile-dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    width: 240px;
+    background: white;
+    border: 1px solid var(--border-soft);
+    border-radius: 20px;
+    box-shadow: 0 16px 48px rgba(45, 58, 46, 0.15);
+    padding: 0;
+    overflow: hidden;
+
+    /* Hidden by default */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px) scale(0.97);
+    transform-origin: top right;
+    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: none;
+}
+
+.profile-dropdown.open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
+
+/* -- Top section: avatar + info ------------------------------ */
+.profile-dropdown-top {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 20px 18px 16px;
+}
+
+.profile-avatar-lg {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent-light));
+    color: white;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(61, 139, 94, 0.3);
+}
+
+.profile-info {
+    min-width: 0;
+    flex: 1;
+}
+
+.profile-name {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0 0 3px;
+}
+
+.profile-email {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 400;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0;
+}
+
+/* -- Divider ------------------------------------------------- */
+.profile-dropdown-divider {
+    height: 1px;
+    background: var(--border-soft);
+    margin: 0;
+}
+
+/* -- Sign Out button ----------------------------------------- */
+.profile-logout-btn {
+    width: 100%;
+    padding: 14px 18px;
+    background: transparent;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #d95959;
+    cursor: pointer;
+    transition: background 0.18s ease;
+    text-align: left;
+}
+
+.profile-logout-btn:hover {
+    background: #fff1f1;
+}
+
+.profile-logout-btn svg {
+    flex-shrink: 0;
+    stroke: #d95959;
+}
+
+/* --------------------------------------------------------------
+   PROFILE � fixed top-right, professional pill trigger + card
+-------------------------------------------------------------- */
+
+/* Old classes cleanup */
+.chat-header,
+.user-profile,
+.logout-btn,
+.avatar-btn,
+.profile-dropdown-top,
+.profile-dropdown-divider,
+.profile-logout-btn,
+.profile-avatar-lg,
+.profile-info,
+.profile-name,
+.profile-email,
+.user-name {
+    all: unset;
+}
+
+/* Wrapper: fixed to viewport top-right */
+.profile-wrapper {
+    position: fixed;
+    top: 16px;
+    right: 24px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+/* -- Pill trigger button ----------------------------------- */
+.avatar-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 6px 14px 6px 6px;
+    background: #ffffff;
+    border: 1.5px solid #e2ddd4;
+    border-radius: 99px;
+    cursor: pointer;
+    transition: all 0.22s ease;
+    box-shadow: 0 2px 12px rgba(45, 58, 46, 0.08);
+    font-family: 'Nunito', sans-serif;
+}
+
+.avatar-trigger:hover {
+    border-color: var(--accent);
+    box-shadow: 0 4px 18px rgba(61, 139, 94, 0.18);
+    transform: translateY(-1px);
+}
+
+.avatar-trigger.open {
+    border-color: var(--accent);
+    box-shadow: 0 4px 18px rgba(61, 139, 94, 0.2);
+}
+
+/* Circle with initial */
+.avatar-circle {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent-light));
+    color: #fff;
+    font-weight: 900;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    letter-spacing: 0;
+    box-shadow: 0 2px 8px rgba(61, 139, 94, 0.35);
+}
+
+.avatar-label {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    max-width: 110px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    letter-spacing: 0.01em;
+}
+
+.avatar-caret {
+    stroke: var(--text-muted);
+    flex-shrink: 0;
+    transition: transform 0.22s ease;
+}
+
+.avatar-trigger.open .avatar-caret {
+    transform: rotate(180deg);
+}
+
+/* -- Dropdown card ----------------------------------------- */
+.profile-dropdown {
+    margin-top: 8px;
+    width: 256px;
+    background: #fff;
+    border: 1px solid #e8e4dc;
+    border-radius: 18px;
+    box-shadow:
+        0 4px 6px rgba(45, 58, 46, 0.04),
+        0 16px 48px rgba(45, 58, 46, 0.13);
+    overflow: hidden;
+
+    /* Hidden */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px) scale(0.97);
+    transform-origin: top right;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: none;
+}
+
+.profile-dropdown.open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
+
+/* Header row */
+.pd-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px 18px 14px;
+    background: linear-gradient(135deg,
+            rgba(61, 139, 94, 0.06) 0%,
+            rgba(224, 123, 57, 0.04) 100%);
+}
+
+.pd-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent-light));
+    color: #fff;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(61, 139, 94, 0.28);
+}
+
+.pd-info {
+    min-width: 0;
+    flex: 1;
+}
+
+.pd-name {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.92rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0 0 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.pd-email {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Divider */
+.pd-divider {
+    height: 1px;
+    background: #f0ebe3;
+    margin: 0;
+}
+
+/* Actions area */
+.pd-actions {
+    padding: 6px;
+}
+
+.pd-action-btn {
+    width: 100%;
+    padding: 10px 12px;
+    background: transparent;
+    border: none;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    text-align: left;
+}
+
+.pd-logout {
+    color: #c0392b;
+}
+
+.pd-logout svg {
+    stroke: #c0392b;
+    flex-shrink: 0;
+}
+
+.pd-logout:hover {
+    background: #fff0ef;
+    color: #a93226;
 }

@@ -2,9 +2,10 @@ import pandas as pd
 import numpy as np
 import os
 import joblib
+import tensorflow as tf
+from tensorflow import keras
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-from sklearn.neural_network import MLPClassifier
 
 def train_model():
     # Load dataset
@@ -30,27 +31,30 @@ def train_model():
     joblib.dump(scaler, scaler_path)
     print(f"Scaler saved to {scaler_path}")
 
-    # Build MLP Classifier (Neural Network)
-    # Using a similar architecture to what was intended in Keras
-    clf = MLPClassifier(
-        hidden_layer_sizes=(32, 16),
-        activation='relu',
-        solver='adam',
-        max_iter=500,
-        random_state=42,
-        verbose=True
+    # Build Keras Model
+    model = keras.Sequential([
+        keras.layers.Dense(64, activation='relu', input_shape=(X_train_scaled.shape[1],)),
+        keras.layers.Dropout(0.2),
+        keras.layers.Dense(32, activation='relu'),
+        keras.layers.Dense(6, activation='softmax') # 6 classes: Solar, Wind, Hydro, Biomass, Geothermal, Tidal
+    ])
+
+    model.compile(
+        optimizer='adam',
+        loss='sparse_categorical_crossentropy',
+        metrics=['accuracy']
     )
 
-    print("Training Neural Network model...")
-    clf.fit(X_train_scaled, y_train)
+    print("Training Keras model...")
+    model.fit(X_train_scaled, y_train, epochs=10, batch_size=32, validation_split=0.1, verbose=1)
 
     # Evaluate
-    acc = clf.score(X_test_scaled, y_test)
+    loss, acc = model.evaluate(X_test_scaled, y_test, verbose=0)
     print(f"Test Accuracy: {acc:.4f}")
 
     # Save model
-    model_path = os.path.join(model_dir, 'energy_model.joblib')
-    joblib.dump(clf, model_path)
+    model_path = os.path.join(model_dir, 'energy_model.keras')
+    model.save(model_path)
     print(f"Model saved to {model_path}")
 
 if __name__ == '__main__':

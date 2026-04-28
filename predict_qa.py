@@ -4,53 +4,77 @@ import json
 import joblib
 import warnings
 import io
+import numpy as np
 
-# Force UTF-8 stdout on Windows so emoji/unicode pass through
+# Force UTF-8 stdout on Windows
 if sys.stdout.encoding != 'utf-8':
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
-
 
 # Suppress unnecessary warnings
 warnings.filterwarnings("ignore")
 
-def predict_answer(question):
-    try:
-        # Load the lightweight scikit-learn pipeline
-        model_path = 'model/qa/qa_pipeline.joblib'
-        if not os.path.exists(model_path):
-            return "QA Engine Error: Model not found. Please train the model first."
-            
-        pipeline = joblib.load(model_path)
-        
-        with open('model/qa/metadata.json', 'r', encoding='utf-8') as f:
-            metadata = json.load(f)
-        with open('model/qa/responses.json', 'r', encoding='utf-8') as f:
-            responses = json.load(f)
+# Global variables for caching models
+MODEL = None
+TOKENIZER = None
+INTENTS = None
+RESPONSES = None
 
-            
-        intents = metadata['intents']
+def load_resources():
+    global MODEL, TOKENIZER, INTENTS, RESPONSES
+    try:
+        import tensorflow as tf
+        from tensorflow import keras
+        from tensorflow.keras.preprocessing.sequence import pad_sequences
         
-        # Inference using the pipeline (Vectorization + Prediction)
-        # pipeline.predict_proba returns a list of probabilities for each class
-        probs = pipeline.predict_proba([question.lower()])[0]
-        idx = probs.argmax()
+        model_path = 'model/qa/qa_model.keras'
+        tok_path = 'model/qa/tokenizer.joblib'
+        meta_path = 'model/qa/metadata.json'
+        resp_path = 'model/qa/responses.json'
+
+        if not all(os.path.exists(p) for p in [model_path, tok_path, meta_path, resp_path]):
+            return False
+
+        MODEL = keras.models.load_model(model_path)
+        TOKENIZER = joblib.load(tok_path)
+        with open(meta_path, 'r', encoding='utf-8') as f:
+            INTENTS = json.load(f)['intents']
+        with open(resp_path, 'r', encoding='utf-8') as f:
+            RESPONSES = json.load(f)
+        return True
+    except Exception as e:
+        print(f"Load Error: {e}", file=sys.stderr)
+        return False
+
+def predict_answer(question):
+    if MODEL is None:
+        if not load_resources():
+            return "QA Engine Error: Models not ready. Please train the system."
+
+    try:
+        from tensorflow.keras.preprocessing.sequence import pad_sequences
+        
+        # Preprocess
+        seq = TOKENIZER.texts_to_sequences([question.lower()])
+        padded = pad_sequences(seq, maxlen=40, padding='post')
+        
+        # Predict
+        probs = MODEL.predict(padded, verbose=0)[0]
+        idx = np.argmax(probs)
         conf = probs[idx]
         
-        # Confidence threshold
+        # Lower threshold for better responsiveness given expanded data
         if conf < 0.25:
-            return "I'm not entirely sure about that specific detail, but I can tell you that renewable energy is the most sustainable choice for your environment. Could you try rephrasing your question?"
-            
-        intent = intents[idx]
-        full_response = responses.get(intent, "I'm still learning about that topic.")
+            return "I'm not entirely sure about that specific detail, but I can tell you that renewable energy is the most sustainable choice. Could you try rephrasing?"
+
+        intent = INTENTS[idx]
+        full_response = RESPONSES.get(intent, "I'm still learning about that topic.")
         
-        # Language Detection: Check if the question contains Devanagari (Hindi) characters
+        # Language Detection
         has_hindi = any('\u0900' <= char <= '\u097f' for char in question)
         
-        # Split bilingual response if it exists
         if " / " in full_response:
             parts = full_response.split(" / ")
             if len(parts) == 2:
-                # Return Hindi part if Hindi characters found, else English part
                 return parts[1] if has_hindi else parts[0]
         
         return full_response

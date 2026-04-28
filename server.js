@@ -4,20 +4,166 @@ import cors from 'cors';
 import { spawn } from 'child_process';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+import User from './models/User.js';
+import Chat from './models/Chat.js';
+
+dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/ecoai';
+const JWT_SECRET = process.env.JWT_SECRET || 'ecoai_secret_key_2024';
+
+// MongoDB Connection
+mongoose.connect(MONGODB_URI)
+    .then(() => console.log('Connected to MongoDB via Compass'))
+    .catch(err => console.error('MongoDB connection error:', err));
 
 app.use(cors());
 app.use(bodyParser.json());
 app.use('/static', express.static(path.join(__dirname, 'static')));
 
+// ── Auth Middleware ──────────────────────────────────────────────────────────
+const authenticateToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (!token || token === 'null' || token === 'undefined') {
+        return res.status(401).json({ error: 'Unauthorized. Please login.' });
+    }
+
+    jwt.verify(token, JWT_SECRET, (err, user) => {
+        if (err) return res.status(403).json({ error: 'Forbidden. Invalid session.' });
+        req.user = user;
+        next();
+    });
+};
+
 // ── Page Routes ─────────────────────────────────────────────────────────────
+app.get('/login', (req, res) => res.sendFile(path.join(__dirname, 'templates', 'login.html')));
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'templates', 'index.html')));
 app.get('/result', (req, res) => res.sendFile(path.join(__dirname, 'templates', 'result.html')));
+
+// ── Auth API ───────────────────────────────────────────────────────────────
+app.post('/api/auth/signup', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        console.log(`Signup attempt for: ${email}`);
+        const existingUser = await User.findOne({ email });
+        
+        if (existingUser) {
+            return res.status(400).json({ error: 'Account already exists. Please login instead.' });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const newUser = new User({ email, password: hashedPassword });
+        await newUser.save();
+
+        res.status(201).json({ message: 'User created successfully' });
+    } catch (err) {
+        console.error('Signup error:', err.message, err.code);
+        res.status(500).json({ error: err.message || 'Signup failed' });
+    }
+});
+
+app.post('/api/auth/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        console.log(`Login attempt for: ${email}`);
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({ error: 'Account does not exist. Please sign up.' });
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(401).json({ error: 'Invalid credentials' });
+        }
+
+        const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, { expiresIn: '1d' });
+        res.json({ token, email: user.email });
+    } catch (err) {
+        console.error('Login error:', err.message);
+        res.status(500).json({ error: err.message || 'Login failed' });
+    }
+});
+
+// ── History API ──────────────────────────────────────────────────────────────
+app.get('/api/history', authenticateToken, async (req, res) => {
+    try {
+        const chats = await Chat.find({ userId: req.user.id }).sort({ updatedAt: -1 });
+        res.json(chats);
+    } catch (err) {
+        console.error('History Fetch Error:', err);
+        res.status(500).json({ error: 'Failed to fetch history.' });
+    }
+});
+
+app.post('/api/history', authenticateToken, async (req, res) => {
+    try {
+        const { chatId, title, messages } = req.body;
+        
+        let chat;
+        // Case 1: Client-side ID (starts with 'chat_') -> Create new
+        if (chatId && typeof chatId === 'string' && chatId.startsWith('chat_')) {
+            chat = new Chat({
+                userId: req.user.id,
+                title: title || 'New Chat',
+                messages: messages || []
+            });
+            await chat.save();
+        } 
+        // Case 2: Existing Database ID -> Update
+        else if (chatId && mongoose.Types.ObjectId.isValid(chatId)) {
+            chat = await Chat.findOneAndUpdate(
+                { _id: chatId, userId: req.user.id },
+                { title, messages, updatedAt: Date.now() },
+                { new: true }
+            );
+
+            // Fallback: If not found (e.g. deleted or wrong user), create new instead of returning null
+            if (!chat) {
+                chat = new Chat({
+                    userId: req.user.id,
+                    title: title || 'New Chat',
+                    messages: messages || []
+                });
+                await chat.save();
+            }
+        } 
+        // Case 3: No ID or invalid -> Create new
+        else {
+            chat = new Chat({
+                userId: req.user.id,
+                title: title || 'New Chat',
+                messages: messages || []
+            });
+            await chat.save();
+        }
+        
+        res.json(chat);
+    } catch (err) {
+        console.error('History Save Error:', err);
+        res.status(500).json({ error: 'Failed to save history: ' + err.message });
+    }
+});
+
+app.delete('/api/history/:id', authenticateToken, async (req, res) => {
+    try {
+        await Chat.findOneAndDelete({ _id: req.params.id, userId: req.user.id });
+        res.json({ message: 'Chat deleted.' });
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to delete chat.' });
+    }
+});
 
 // POST /api/chat: The main bridge to the local NLP & fuzzy inference engine
 app.post('/api/chat', async (req, res) => {
@@ -48,7 +194,10 @@ app.post('/api/chat', async (req, res) => {
 
         if (code !== 0) {
             console.error('Python Error (Code ' + code + '):', error);
-            return res.status(500).json({ error: 'Inference engine failed.' });
+            if (!res.headersSent) {
+                res.status(500).json({ error: 'Inference engine failed: ' + error });
+            }
+            return;
         }
         try {
             res.json(JSON.parse(result));

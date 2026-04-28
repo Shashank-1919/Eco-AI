@@ -3,297 +3,521 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eco-AI — Sign In</title>
-    <meta name="description" content="Sign in to Eco-AI, your personal renewable energy advisor.">
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/css/style.css">
+    <title>Eco-AI — Welcome Back</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
-        body {
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --green-deep: #0d4a2e;
+            --green-mid: #1a7a4a;
+            --green-bright: #2ecc71;
+            --orange: #f39c12;
+            --text-light: rgba(255,255,255,0.9);
+            --text-muted: rgba(255,255,255,0.45);
+        }
+
+        html, body {
+            width: 100%; height: 100%;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            background: #071810;
+        }
+
+        /* ── Full-page Canvas ──────────────────────────────── */
+        #bgCanvas {
+            position: fixed; inset: 0; z-index: 0;
+        }
+
+        /* ── Leaves layer ──────────────────────────────────── */
+        #leavesContainer {
+            position: fixed; inset: 0; z-index: 1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .leaf {
+            position: absolute;
+            top: -80px;
+            font-size: 22px;
+            opacity: 0;
+            animation: leafFall linear infinite;
+            pointer-events: none;
+            user-select: none;
+            filter: drop-shadow(0 0 6px rgba(46,204,113,0.35));
+        }
+
+        @keyframes leafFall {
+            0%   { transform: translateY(0)    rotate(0deg)   translateX(0px);  opacity: 0; }
+            5%   { opacity: 0.85; }
+            50%  { transform: translateY(50vh) rotate(180deg) translateX(40px); opacity: 0.6; }
+            95%  { opacity: 0.4; }
+            100% { transform: translateY(110vh) rotate(380deg) translateX(-30px); opacity: 0; }
+        }
+
+        /* ── Centered page ─────────────────────────────────── */
+        .page {
+            position: relative; z-index: 2;
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 100vh;
-            height: auto;
-            overflow: auto;
-            background-color: #f5f2eb;
-            background-image:
-                radial-gradient(circle at 15% 25%, rgba(61,139,94,0.10) 0%, transparent 50%),
-                radial-gradient(circle at 85% 75%, rgba(224,123,57,0.08) 0%, transparent 50%),
-                url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='30' cy='30' r='1.5' fill='%233d8b5e' fill-opacity='0.06'/%3E%3C/svg%3E");
-            background-size: auto, auto, 60px 60px;
+            height: 100vh;
         }
 
-        .auth-wrap {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-            padding: 32px 16px;
-            width: 100%;
-            max-width: 440px;
-        }
-
-        /* Logo mark above card */
-        .auth-brand {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 4px;
-        }
-
-        .auth-brand-icon {
-            width: 46px;
-            height: 46px;
-            border-radius: 14px;
-            background: linear-gradient(135deg, #3d8b5e, #5eab7d);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            box-shadow: 0 6px 18px rgba(61,139,94,0.35);
-        }
-
-        .auth-brand-name {
-            font-family: 'Nunito', sans-serif;
-            font-size: 1.7rem;
-            font-weight: 900;
-            background: linear-gradient(100deg, #3d8b5e 0%, #5eab7d 45%, #e07b39 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        /* Card */
+        /* ── Auth Card ─────────────────────────────────────── */
         .auth-card {
-            background: #ffffff;
-            border: 1.5px solid #e2ddd4;
-            border-radius: 24px;
-            padding: 36px 36px 28px;
-            width: 100%;
-            box-shadow: 0 16px 48px rgba(45,58,46,0.10);
+            width: 420px;
+            background: rgba(10, 30, 18, 0.72);
+            backdrop-filter: blur(32px);
+            -webkit-backdrop-filter: blur(32px);
+            border: 1px solid rgba(46, 204, 113, 0.18);
+            border-radius: 28px;
+            padding: 44px 40px 40px;
+            box-shadow:
+                0 0 0 1px rgba(255,255,255,0.04) inset,
+                0 32px 80px rgba(0,0,0,0.5),
+                0 0 60px rgba(46,204,113,0.06);
+            animation: cardIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
         }
 
-        .auth-card-title {
-            font-family: 'Nunito', sans-serif;
-            font-size: 1.55rem;
-            font-weight: 800;
-            color: #2d3a2e;
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(28px) scale(0.96); }
+            to   { opacity: 1; transform: translateY(0)    scale(1); }
+        }
+
+        /* Logo */
+        .auth-logo {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            margin-bottom: 32px;
+        }
+
+        .logo-icon {
+            width: 42px; height: 42px;
+            background: linear-gradient(135deg, var(--green-mid), var(--green-bright));
+            border-radius: 13px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.25rem;
+            box-shadow: 0 6px 20px rgba(46,204,113,0.35);
+        }
+
+        .logo-text {
+            font-size: 1.45rem; font-weight: 800;
+            color: white; letter-spacing: -0.025em;
+        }
+
+        .auth-heading {
+            font-size: 1.75rem; font-weight: 800;
+            color: white; letter-spacing: -0.025em;
             margin-bottom: 6px;
-            text-align: center;
         }
 
-        .auth-card-subtitle {
-            font-size: 0.9rem;
-            color: #8a9a8c;
-            text-align: center;
-            margin-bottom: 26px;
-            font-family: 'Lato', sans-serif;
+        .auth-sub {
+            font-size: 0.88rem; color: var(--text-muted);
+            margin-bottom: 30px; font-weight: 400; line-height: 1.5;
         }
 
-        .auth-form {
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-        }
-
-        .auth-field {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .auth-field label {
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: #4a5568;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-            font-family: 'Lato', sans-serif;
-        }
-
-        .auth-input {
-            width: 100%;
-            padding: 12px 16px;
-            border-radius: 12px;
-            border: 1.5px solid #e2ddd4;
-            background: #f9f7f3;
-            color: #2d3a2e;
-            font-size: 0.97rem;
-            font-family: 'Lato', sans-serif;
-            outline: none;
-            transition: border-color 0.25s, box-shadow 0.25s;
-        }
-
-        .auth-input:focus {
-            border-color: #3d8b5e;
-            background: #fff;
-            box-shadow: 0 0 0 3px rgba(61,139,94,0.12);
-        }
-
-        .auth-input::placeholder {
-            color: #a0aca2;
-        }
-
-        .auth-btn {
-            background: linear-gradient(135deg, #3d8b5e, #5eab7d);
-            color: white;
-            border: none;
-            padding: 14px;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 800;
-            font-family: 'Nunito', sans-serif;
+        /* Google button */
+        .google-btn {
+            width: 100%; padding: 13px 20px;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.13);
+            border-radius: 14px; color: white;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.92rem; font-weight: 600;
             cursor: pointer;
-            margin-top: 6px;
+            display: flex; align-items: center; justify-content: center; gap: 12px;
             transition: all 0.25s ease;
-            letter-spacing: 0.01em;
-            box-shadow: 0 6px 16px rgba(61,139,94,0.35);
+            margin-bottom: 22px;
         }
 
-        .auth-btn:hover {
+        .google-btn:hover {
+            background: rgba(255,255,255,0.12);
+            border-color: rgba(255,255,255,0.22);
             transform: translateY(-1px);
-            box-shadow: 0 8px 22px rgba(61,139,94,0.45);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
         }
 
-        .auth-divider {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin: 4px 0;
+        /* Divider */
+        .divider {
+            display: flex; align-items: center; gap: 12px;
+            margin-top: 28px;
+            margin-bottom: 24px;
+        }
+        .divider span {
+            font-size: 0.7rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.12em;
+            color: rgba(255,255,255,0.25); white-space: nowrap;
+        }
+        .divider::before, .divider::after {
+            content: ''; flex: 1; height: 1px;
+            background: rgba(255,255,255,0.08);
         }
 
-        .auth-divider::before,
-        .auth-divider::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: #e2ddd4;
+        /* Inputs */
+        .form-group { margin-bottom: 15px; }
+
+        .form-group label {
+            display: block; font-size: 0.78rem; font-weight: 700;
+            color: rgba(255,255,255,0.55); margin-bottom: 7px;
+            letter-spacing: 0.04em; text-transform: uppercase;
         }
 
-        .auth-divider span {
-            font-size: 0.78rem;
-            color: #a0aca2;
+        .form-group input {
+            width: 100%; padding: 13px 16px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.09);
+            border-radius: 12px; color: white;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem; font-weight: 500; outline: none;
+            transition: all 0.25s ease;
+        }
+        .form-group input::placeholder { color: rgba(255,255,255,0.2); }
+        .form-group input:focus {
+            border-color: rgba(46,204,113,0.6);
+            background: rgba(46,204,113,0.05);
+            box-shadow: 0 0 0 4px rgba(46,204,113,0.1);
         }
 
-        .auth-toggle {
-            margin-top: 18px;
-            color: #8a9a8c;
-            font-size: 0.88rem;
-            text-align: center;
-            font-family: 'Lato', sans-serif;
+        /* Submit button */
+        .btn-submit {
+            width: 100%; padding: 14px; margin-top: 6px;
+            background: linear-gradient(135deg, #1a7a4a 0%, #2ecc71 100%);
+            border: none; border-radius: 14px;
+            color: white; font-family: 'Inter', sans-serif;
+            font-size: 0.95rem; font-weight: 700;
+            cursor: pointer; transition: all 0.3s ease;
+            box-shadow: 0 8px 24px rgba(46,204,113,0.28);
+            position: relative; overflow: hidden;
+            letter-spacing: 0.01em;
         }
-
-        .auth-toggle span {
-            color: #3d8b5e;
-            cursor: pointer;
-            font-weight: 700;
+        .btn-submit::after {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, transparent 60%);
+            opacity: 0; transition: opacity 0.3s;
         }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 14px 32px rgba(46,204,113,0.38); }
+        .btn-submit:hover::after { opacity: 1; }
+        .btn-submit:active { transform: translateY(0); }
+        .btn-submit:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
 
-        .auth-toggle span:hover {
-            text-decoration: underline;
+        /* Toggle */
+        .toggle-row {
+            text-align: center; margin-top: 22px;
+            font-size: 0.84rem; color: rgba(255,255,255,0.35); font-weight: 500;
         }
-
-        .auth-back {
-            color: #8a9a8c;
-            text-decoration: none;
-            font-size: 0.85rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
+        .toggle-row a {
+            color: var(--green-bright); cursor: pointer;
+            font-weight: 700; margin-left: 5px; text-decoration: none;
             transition: color 0.2s;
-            font-family: 'Lato', sans-serif;
         }
+        .toggle-row a:hover { color: #5ddb8a; }
 
-        .auth-back:hover { color: #3d8b5e; }
+        /* Messages */
+        #message {
+            margin-top: 14px; padding: 11px 15px;
+            border-radius: 11px; font-size: 0.82rem;
+            font-weight: 600; display: none; line-height: 1.4;
+        }
+        .msg-error  { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.25); color: #fca5a5; }
+        .msg-success{ background: rgba(46,204,113,0.08); border: 1px solid rgba(46,204,113,0.25); color: #6ee7a0; }
+
+        /* Scrollbar suppression */
+        ::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body>
 
-    <div class="auth-wrap">
-        <!-- Branding -->
-        <div class="auth-brand">
-            <div class="auth-brand-icon">🌿</div>
-            <span class="auth-brand-name">Eco-AI</span>
+<!-- Layer 0: Canvas particle background -->
+<canvas id="bgCanvas"></canvas>
+
+<!-- Layer 1: Falling leaves -->
+<div id="leavesContainer"></div>
+
+<!-- Layer 2: Centered card -->
+<div class="page">
+    <div class="auth-card">
+        <div class="auth-logo">
+            <div class="logo-icon">🌿</div>
+            <span class="logo-text">Eco-AI</span>
         </div>
 
-        <!-- Card -->
-        <div class="auth-card">
-            <h1 class="auth-card-title" id="formTitle">Welcome back</h1>
-            <p class="auth-card-subtitle" id="formSubtitle">Sign in to continue to your energy dashboard</p>
+        <h2 class="auth-heading" id="authHeading">Welcome back</h2>
+        <p class="auth-sub" id="authSub">Sign in to continue your green energy journey</p>
 
-            <form id="authForm" class="auth-form">
-                <div class="auth-field">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" class="auth-input" placeholder="e.g. john_doe" required>
-                </div>
-                <div class="auth-field">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" class="auth-input" placeholder="Your password" required>
-                </div>
-
-                <button type="submit" class="auth-btn" id="submitBtn">Sign In</button>
-            </form>
-
-            <div class="auth-toggle" id="toggleText">
-                Don't have an account? <span onclick="toggleMode()">Create one free</span>
+        <form id="authForm">
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" placeholder="you@example.com" required autocomplete="email">
             </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="••••••••" required autocomplete="current-password">
+            </div>
+            <button type="submit" class="btn-submit" id="submitBtn">Sign In</button>
+        </form>
+
+        <div class="divider"><span>or continue with</span></div>
+
+        <button class="google-btn" id="googleBtn" type="button" style="margin-bottom: 0;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            </svg>
+            Continue with Google
+        </button>
+
+        <div id="message"></div>
+
+        <div class="toggle-row" style="margin-top: 28px;">
+            <span id="toggleQuestion">Don't have an account?</span>
+            <a id="toggleAuth">Create one</a>
         </div>
-
-        <a href="/" class="auth-back">← Back to chat</a>
     </div>
+</div>
 
-    <script>
-        let isLoginMode = true;
+<!-- Google GIS config (hidden) -->
+<div id="g_id_onload"
+     data-client_id="YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com"
+     data-callback="handleCredentialResponse"
+     data-auto_prompt="false"
+     style="display:none">
+</div>
 
-        const authForm     = document.getElementById('authForm');
-        const formTitle    = document.getElementById('formTitle');
-        const formSubtitle = document.getElementById('formSubtitle');
-        const submitBtn    = document.getElementById('submitBtn');
-        const toggleText   = document.getElementById('toggleText');
+<script>
+/* ── Canvas: dark forest + glowing orbs + floating particles ─────── */
+(function () {
+    const canvas = document.getElementById('bgCanvas');
+    const ctx    = canvas.getContext('2d');
+    let W, H, particles = [];
 
-        function toggleMode() {
-            isLoginMode = !isLoginMode;
-            if (isLoginMode) {
-                formTitle.textContent    = 'Welcome back';
-                formSubtitle.textContent = 'Sign in to continue to your energy dashboard';
-                submitBtn.textContent    = 'Sign In';
-                toggleText.innerHTML     = `Don't have an account? <span onclick="toggleMode()">Create one free</span>`;
-            } else {
-                formTitle.textContent    = 'Create account';
-                formSubtitle.textContent = 'Join Eco-AI and start optimising your energy today';
-                submitBtn.textContent    = 'Create Account';
-                toggleText.innerHTML     = `Already have an account? <span onclick="toggleMode()">Sign in</span>`;
+    function resize() { W = canvas.width = innerWidth; H = canvas.height = innerHeight; }
+    addEventListener('resize', resize);
+    resize();
+
+    const orbDefs = [
+        { xr: 0.1,  yr: 0.2, r: 380, color: 'rgba(22,105,60,0.22)' },
+        { xr: 0.88, yr: 0.75, r: 300, color: 'rgba(46,204,113,0.12)' },
+        { xr: 0.55, yr: 0.9, r: 220, color: 'rgba(243,156,18,0.06)' },
+    ];
+
+    class P {
+        constructor() { this.init(); }
+        init() {
+            this.x = Math.random() * W;
+            this.y = Math.random() * H;
+            this.r = Math.random() * 1.4 + 0.3;
+            this.vx = (Math.random() - 0.5) * 0.35;
+            this.vy = -(Math.random() * 0.3 + 0.05);
+            this.a  = Math.random() * 0.45 + 0.1;
+            this.hue = Math.random() > 0.6 ? '243,156,18' : '46,204,113';
+        }
+        update() {
+            this.x += this.vx; this.y += this.vy;
+            if (this.y < -4) { this.y = H + 4; this.x = Math.random() * W; }
+        }
+        draw() {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(${this.hue},${this.a})`;
+            ctx.fill();
+        }
+    }
+    for (let i = 0; i < 130; i++) particles.push(new P());
+
+    let t = 0;
+    (function loop() {
+        ctx.clearRect(0, 0, W, H);
+
+        // background
+        const bg = ctx.createLinearGradient(0, 0, W * 0.5, H);
+        bg.addColorStop(0, '#040d07');
+        bg.addColorStop(0.6, '#071810');
+        bg.addColorStop(1, '#060e09');
+        ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+
+        // orbs
+        t += 0.003;
+        orbDefs.forEach((o, i) => {
+            const ox = o.xr * W + Math.sin(t + i * 1.3) * 55;
+            const oy = o.yr * H + Math.cos(t * 0.85 + i * 0.9) * 45;
+            const g  = ctx.createRadialGradient(ox, oy, 0, ox, oy, o.r);
+            g.addColorStop(0, o.color); g.addColorStop(1, 'transparent');
+            ctx.fillStyle = g;
+            ctx.beginPath(); ctx.arc(ox, oy, o.r, 0, Math.PI * 2); ctx.fill();
+        });
+
+        // subtle hex-grid
+        ctx.strokeStyle = 'rgba(46,204,113,0.025)'; ctx.lineWidth = 1;
+        const s = 90;
+        for (let x = 0; x < W + s; x += s)
+            for (let y = 0; y < H + s; y += s * 0.866) {
+                const off = Math.floor(y / (s * 0.866)) % 2 === 0 ? 0 : s / 2;
+                hexPath(ctx, x + off, y, s * 0.48);
+            }
+
+        // particles + connections
+        for (let i = 0; i < particles.length; i++) {
+            particles[i].update(); particles[i].draw();
+            for (let j = i + 1; j < particles.length; j++) {
+                const dx = particles[i].x - particles[j].x;
+                const dy = particles[i].y - particles[j].y;
+                const d  = Math.hypot(dx, dy);
+                if (d < 85) {
+                    ctx.strokeStyle = `rgba(46,204,113,${0.06 * (1 - d / 85)})`;
+                    ctx.lineWidth = 0.6;
+                    ctx.beginPath();
+                    ctx.moveTo(particles[i].x, particles[i].y);
+                    ctx.lineTo(particles[j].x, particles[j].y);
+                    ctx.stroke();
+                }
             }
         }
+        requestAnimationFrame(loop);
+    })();
 
-        authForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const username = document.getElementById('username').value.trim();
-            const password = document.getElementById('password').value.trim();
-            if (!username || !password) return;
+    function hexPath(c, x, y, r) {
+        c.beginPath();
+        for (let i = 0; i < 6; i++) {
+            const a = (Math.PI / 3) * i - Math.PI / 6;
+            i === 0 ? c.moveTo(x + r * Math.cos(a), y + r * Math.sin(a))
+                    : c.lineTo(x + r * Math.cos(a), y + r * Math.sin(a));
+        }
+        c.closePath(); c.stroke();
+    }
+})();
 
-            let users = JSON.parse(localStorage.getItem('eco_users')) || {};
+/* ── Leaf Rain ───────────────────────────────────────────────────── */
+(function () {
+    const emojis  = ['🍃','🌿','🍀','☘️','🍂'];
+    const sizes   = [14, 18, 22, 26, 30];
+    const cont    = document.getElementById('leavesContainer');
 
-            if (isLoginMode) {
-                if (users[username] && users[username] === password) {
-                    sessionStorage.setItem('active_user', username);
-                    window.location.href = '/';
-                } else {
-                    alert('Invalid username or password.');
-                }
-            } else {
-                if (users[username]) {
-                    alert('User already exists — please sign in instead.');
-                    setTimeout(() => { window.location.href = '/login'; }, 1000);
-                } else {
-                    users[username] = password;
-                    localStorage.setItem('eco_users', JSON.stringify(users));
-                    sessionStorage.setItem('active_user', username);
-                    alert('Account created! Redirecting…');
-                    setTimeout(() => { window.location.href = '/'; }, 900);
-                }
-            }
+    function spawn() {
+        const el   = document.createElement('span');
+        el.className = 'leaf';
+        el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        const sz   = sizes[Math.floor(Math.random() * sizes.length)];
+        const dur  = 12 + Math.random() * 10;
+        const delay= Math.random() * 3;
+        el.style.cssText = `
+            left: ${Math.random() * 100}%;
+            font-size: ${sz}px;
+            animation-duration: ${dur}s;
+            animation-delay: ${delay}s;
+        `;
+        cont.appendChild(el);
+        setTimeout(() => el.remove(), (dur + delay + 1) * 1000);
+    }
+
+    // Initial burst so the screen is never empty
+    for (let i = 0; i < 20; i++) {
+        setTimeout(spawn, i * 200);
+    }
+    // Keep spawning
+    setInterval(spawn, 900);
+})();
+
+/* ── Auth Logic ──────────────────────────────────────────────────── */
+const form         = document.getElementById('authForm');
+const submitBtn    = document.getElementById('submitBtn');
+const toggleAuth   = document.getElementById('toggleAuth');
+const authHeading  = document.getElementById('authHeading');
+const authSub      = document.getElementById('authSub');
+const toggleQ      = document.getElementById('toggleQuestion');
+const messageDiv   = document.getElementById('message');
+const emailInput   = document.getElementById('email');
+const passInput    = document.getElementById('password');
+
+let isLogin = true;
+
+// Google callback
+function handleCredentialResponse(response) {
+    const payload = JSON.parse(atob(
+        response.credential.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')
+    ));
+    emailInput.value = payload.email;
+    passInput.focus();
+    showMsg('✅  Email fetched from Google — enter your password.', 'success');
+}
+
+document.getElementById('googleBtn').addEventListener('click', () => {
+    if (window.google?.accounts) google.accounts.id.prompt();
+    else showMsg('Google Sign-In is loading, please try again shortly.', 'error');
+});
+
+toggleAuth.addEventListener('click', () => {
+    isLogin = !isLogin;
+    authHeading.textContent = isLogin ? 'Welcome back' : 'Create account';
+    authSub.textContent     = isLogin ? 'Sign in to continue your green energy journey'
+                                      : 'Join Eco-AI and start your green journey';
+    submitBtn.textContent   = isLogin ? 'Sign In' : 'Create Account';
+    toggleQ.textContent     = isLogin ? "Don't have an account?" : 'Already have an account?';
+    toggleAuth.textContent  = isLogin ? 'Create one' : 'Sign in';
+    messageDiv.style.display = 'none';
+});
+
+form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = emailInput.value.trim();
+    const pass  = passInput.value;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Please wait…';
+
+    try {
+        const res  = await fetch(isLogin ? '/api/auth/login' : '/api/auth/signup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password: pass })
         });
-    </script>
+        const data = await res.json();
+
+        if (res.ok) {
+            if (isLogin) {
+                localStorage.setItem('eco_token', data.token);
+                localStorage.setItem('eco_user',  data.email);
+                showMsg('✅  Login successful! Redirecting…', 'success');
+                setTimeout(() => window.location.href = '/', 900);
+            } else {
+                showMsg('✅  Account created! Please sign in.', 'success');
+                setTimeout(() => toggleAuth.click(), 1500);
+            }
+        } else {
+            if (isLogin && res.status === 404) {
+                showMsg('Account not found. Redirecting to signup…', 'error');
+                setTimeout(() => toggleAuth.click(), 1500);
+            } else if (!isLogin && res.status === 400) {
+                showMsg(data.error || 'Account already exists.', 'error');
+                setTimeout(() => toggleAuth.click(), 1500);
+            } else {
+                showMsg(data.error || 'Authentication failed.', 'error');
+            }
+        }
+    } catch {
+        showMsg('Connection error — is the server running?', 'error');
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = isLogin ? 'Sign In' : 'Create Account';
+    }
+});
+
+function showMsg(text, type) {
+    messageDiv.textContent = text;
+    messageDiv.className   = type === 'success' ? 'msg-success' : 'msg-error';
+    messageDiv.style.display = 'block';
+}
+
+if (localStorage.getItem('eco_token')) window.location.href = '/';
+
+// Handle mode toggle from query param
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('mode') === 'signup' && isLogin) {
+    toggleAuth.click();
+}
+</script>
 </body>
 </html>

@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import os
 
-def generate_synthetic_data(num_samples=15000):
+def generate_synthetic_data(num_samples=5000):
     np.random.seed(42)
     
     # 0=coastal, 1=mountainous, 2=desert, 3=forest, 4=rural, 5=urban

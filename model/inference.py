@@ -5,7 +5,7 @@ import skfuzzy as fuzz
 
 # Load ML Model and Scaler
 MODEL_DIR = os.path.dirname(__file__)
-MODEL_PATH = os.path.join(MODEL_DIR, 'energy_model.joblib')
+MODEL_PATH = os.path.join(MODEL_DIR, 'energy_model.keras')
 SCALER_PATH = os.path.join(MODEL_DIR, 'scaler.joblib')
 
 CLF = None
@@ -13,7 +13,9 @@ SCALER = None
 
 if os.path.exists(MODEL_PATH) and os.path.exists(SCALER_PATH):
     try:
-        CLF = joblib.load(MODEL_PATH)
+        import tensorflow as tf
+        from tensorflow import keras
+        CLF = keras.models.load_model(MODEL_PATH)
         SCALER = joblib.load(SCALER_PATH)
     except Exception as e:
         import sys
@@ -582,60 +584,79 @@ def predict_renewable_energy(
     loc_mapping = {'coastal': 0, 'mountainous': 1, 'desert': 2, 'forest': 3, 'rural': 4, 'urban': 5}
     loc_idx = loc_mapping.get(location_type, 4)
 
-    # ── Inference ────────────────────────────────────────────────────────────
+    # ── 1. Data-Driven Prediction (Keras) ────────────────────────────────────
+    ml_probs = np.zeros(6)
     if CLF and SCALER:
         # Features: [temp, hum, wind, solar_irr, water, biomass, budget, loc_type]
         features = np.array([[temperature, humidity, wind_speed, solar_irradiance, 
                               water_availability, biomass_availability, budget, loc_idx]])
         features_scaled = SCALER.transform(features)
+        ml_probs = CLF.predict(features_scaled, verbose=0)[0]
+    
+    idx_to_name = {0: 'Solar', 1: 'Wind', 2: 'Hydro', 3: 'Biomass', 4: 'Geothermal', 5: 'Tidal'}
+    
+    # ── 2. Expert-Knowledge Prediction (Fuzzy Logic) ─────────────────────────
+    # Map location type to factors used in FIS
+    wind_factor = LOCATION_WIND_FACTOR.get(location_type, 0.65)
+    hydro_factor = LOCATION_HYDRO_FACTOR.get(location_type, 0.65)
+    bio_factor = LOCATION_BIOMASS_FACTOR.get(location_type, 0.8)
+
+    fuzzy_scores = {
+        'Solar':      _score_solar(solar_irradiance, temperature, humidity, budget),
+        'Wind':       _score_wind(wind_speed, wind_factor, humidity, budget),
+        'Hydro':      _score_hydro(water_availability, hydro_factor, budget),
+        'Biomass':    _score_biomass(biomass_availability, bio_factor, humidity, budget),
+        'Geothermal': _score_geothermal(temperature, budget, location_type),
+        'Tidal':      _score_tidal(location_type, budget, water_availability)
+    }
+
+    # ── 3. Neuro-Fuzzy Hybrid Blending ───────────────────────────────────────
+    # Weights: 70% ML Model, 30% Fuzzy Expert Rules
+    hybrid_scores = {}
+    for i, name in idx_to_name.items():
+        ml_score = ml_probs[i]
+        fz_score = fuzzy_scores.get(name, 0)
         
-        # Get Class Probabilities
-        probs = CLF.predict_proba(features_scaled)[0]
+        # Blending logic
+        combined = (0.7 * ml_score) + (0.3 * fz_score)
         
-        # Mapping to names
-        idx_to_name = {0: 'Solar', 1: 'Wind', 2: 'Hydro', 3: 'Biomass', 4: 'Geothermal', 5: 'Tidal'}
-        scores = {idx_to_name[i]: float(probs[i]) for i in range(len(probs))}
-    else:
-        # Fallback to simple heuristic if model loading failed
-        scores = {
-            'Solar': 0.6 if solar_irradiance > 50 else 0.2,
-            'Wind':  0.6 if wind_speed > 8 else 0.1,
-            'Hydro': 0.6 if water_availability > 70 else 0.05,
-            'Biomass': 0.6 if biomass_availability > 60 else 0.1,
-            'Geothermal': 0.4 if budget > 500000 else 0.05,
-            'Tidal': 0.5 if location_type == 'coastal' and budget > 600000 else 0.01
-        }
+        # Apply Hard Constraints (Fuzzy overrides)
+        if name == 'Tidal' and location_type != 'coastal':
+            combined *= 0.1 # Heavily penalize non-coastal tidal
+        if name == 'Hydro' and water_availability < 15:
+            combined *= 0.2 # Penalize low water hydro
+            
+        hybrid_scores[name] = float(combined)
 
     # ── Rank ─────────────────────────────────────────────────────────────────
-    ranked           = sorted(scores.items(), key=lambda x: x[1], reverse=True)
+    ranked           = sorted(hybrid_scores.items(), key=lambda x: x[1], reverse=True)
     best_type        = ranked[0][0]
     second_best_type = ranked[1][0]
     
-    # Simple hybrid logic
-    hybrid_type = f"{best_type} + {second_best_type}" if scores[second_best_type] > 0.2 else best_type
+    # Simple hybrid logic for recommendation
+    hybrid_rec_type = f"{best_type} + {second_best_type}" if hybrid_scores[second_best_type] > 0.2 else best_type
 
     best_details        = dict(ENERGY_DETAILS.get(best_type, {}))
     second_best_details = dict(ENERGY_DETAILS.get(second_best_type, {}))
+    hybrid_details      = dict(ENERGY_DETAILS.get(hybrid_rec_type, {}))
 
-    hybrid_details      = dict(ENERGY_DETAILS.get(hybrid_type, {}))
-
-    all_pct = {k: round(v * 100, 1) for k, v in scores.items()}
+    all_pct = {k: round(v * 100, 1) for k, v in hybrid_scores.items()}
 
     return {
         'best': {
             'type':       best_type,
-            'score':      round(scores[best_type], 3),
-            'confidence': round(scores[best_type] * 100, 1),
+            'score':      round(hybrid_scores[best_type], 3),
+            'confidence': round(hybrid_scores[best_type] * 100, 1),
             'details':    best_details
         },
         'second_best': {
             'type':       second_best_type,
-            'score':      round(scores[second_best_type], 3),
-            'confidence': round(scores[second_best_type] * 100, 1),
+            'score':      round(hybrid_scores[second_best_type], 3),
+            'confidence': round(hybrid_scores[second_best_type] * 100, 1),
             'details':    second_best_details
         },
         'hybrid': {
-            'type':    hybrid_type,
+            'type':    hybrid_rec_type,
             'details': hybrid_details
         },
         'all_scores':  all_pct,

@@ -1,41 +1,56 @@
-# 🌍 Eco-AI: Renewable Energy Advisor
+# 🌿 Eco-AI: Advanced Renewable Energy Advisor
 
-Eco-AI is a professional, bilingual (English & Hindi) conversational assistant designed to help users navigate the transition to sustainable energy. Leveraging advanced Machine Learning algorithms, it provides tailored recommendations for solar, wind, and other renewable sources based on user needs, budget, and location.
+![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python)
+![TensorFlow](https://img.shields.io/badge/TensorFlow-2.15-orange?logo=tensorflow)
+![Node.js](https://img.shields.io/badge/Node.js-20.x-green?logo=node.js)
+![License](https://img.shields.io/badge/License-MIT-yellow)
+
+**Eco-AI** is a state-of-the-art, bilingual (English & Hindi) conversational advisor designed to accelerate the transition to sustainable energy. It combines **Deep Learning (Keras)** with **Expert Knowledge (Fuzzy Logic)** to provide hyper-personalized recommendations for solar, wind, and hybrid energy systems.
+
+---
+
+## 🧠 The Hybrid Intelligence Engine
+
+Unlike standard chatbots, Eco-AI uses a **Neuro-Fuzzy Architecture**:
+
+1.  **Neural Layer (Keras)**: A deep neural network trained on thousands of environmental data points. It predicts energy potential based on complex non-linear patterns in temperature, solar irradiance, wind speed, and humidity.
+2.  **Fuzzy Layer (Expert Rules)**: A Mamdani-style fuzzy logic controller that applies human-expert constraints (e.g., location-based feasibility, budget limits, and safety overrides).
+3.  **NLP Core**: A custom Keras Embedding model trained for semantic intent recognition in both English and Hindi scripts.
 
 ---
 
 ## 🚀 Key Features
 
-- **Intelligent Prediction Engine**: Uses a custom-trained Keras Neural Network to analyze environmental data and provide energy recommendations.
-- **Bilingual Support**: Full support for English and Hindi queries, making green energy accessible to a wider audience.
-- **Interactive Dashboard**: A modern, responsive UI that visualizes energy recommendations and cost-benefit analyses.
-- **Parameter-Aware Analysis**: Considers roof area, budget, location, and energy requirements to provide highly accurate suggestions.
-- **Persistent Chat History**: Keeps track of your energy journey across sessions.
+-   **Bilingual Intelligence**: Chat naturally in English, Hindi (हिन्दी), or Hinglish.
+-   **Neuro-Fuzzy Recommendations**: Combines probabilistic ML with deterministic expert rules for 100% reliable advice.
+-   **Parameter-Driven**: Analyzes budget, location type (Coastal, Desert, Urban, etc.), roof area, and appliances.
+-   **ROI Calculation**: Automatically estimates payback periods and government subsidies (e.g., PM-KUSUM).
+-   **Privacy First**: Runs 100% locally. No data leaves your machine; no expensive API keys required.
 
 ---
 
 ## 🛠️ Technology Stack
 
-- **Frontend**: HTML5, CSS3 (Vanilla), JavaScript (ES6+)
-- **Backend**: Node.js, Express
-- **AI/ML Engine**: Python, TensorFlow/Keras, Scikit-Learn
-- **NLP Engine**: Custom Python-based natural language processing
-- **Data Processing**: Pandas, Joblib
+-   **AI Framework**: TensorFlow 2.15 (Keras API)
+-   **Logic Engine**: Scikit-Fuzzy (Mamdani Inference)
+-   **Backend**: Node.js & Express (Bridge to Python Engine)
+-   **Frontend**: Professional Vanilla CSS3 & Interactive JS
+-   **Data**: Pandas, NumPy, Scikit-Learn (Preprocessing)
 
 ---
 
 ## 📁 Project Structure
 
 ```text
-├── model/                  # AI Model and Training Scripts
-│   ├── qa/                 # NLP Response Mappings and Weights (Ignored)
-│   ├── energy_dataset.csv  # Training Data (Ignored)
-│   └── inference.py        # Core Logic for Energy Recommendations
-├── static/                 # Frontend Assets (CSS, JS, Images)
-├── templates/              # HTML Templates
-├── server.js               # Node.js Express Server
-├── run_inference.py        # Python Bridge for AI Predictions
-└── requirements.txt        # Python Dependencies
+├── model/
+│   ├── qa/                 # NLP Keras artifacts (.keras, tokenizer.joblib)
+│   ├── energy_model.keras  # Trained energy prediction weights
+│   ├── inference.py        # THE HYBRID ENGINE (Neuro + Fuzzy blending)
+│   └── train_keras_model.py# Energy ML training pipeline
+├── train_qa_model.py       # NLP training pipeline (English/Hindi)
+├── run_inference.py        # JSON-API bridge for the Node.js server
+├── server.js               # Main Express application
+└── static/                 # Modern UI assets and animations
 ```
 
 ---
@@ -43,53 +58,49 @@ Eco-AI is a professional, bilingual (English & Hindi) conversational assistant d
 ## ⚙️ Installation & Setup
 
 ### 1. Prerequisites
-- Node.js (v14+)
-- Python (v3.8+)
+- **Node.js** (v18 or higher)
+- **Python** (v3.10 or higher)
 
-### 2. Environment Configuration
-Create a `.env` file in the root directory (refer to `.env.example`):
-```env
-PORT=3000
-```
+### 2. Setup Virtual Environment (Recommended)
+To avoid dependency conflicts and long-path issues on Windows:
 
-### 3. Install Dependencies
-**Backend (Node.js):**
-```bash
-npm install
-```
+```powershell
+# Create environment
+python -m venv .venv
 
-**AI Engine (Python):**
-```bash
+# Activate environment
+# On Windows:
+.\.venv\Scripts\activate
+# On Mac/Linux:
+source .venv/bin/activate
+
+# Install dependencies
 pip install -r requirements.txt
 ```
 
----
-
-## 🏃 Running the Application
-
-1. Start the server:
-   ```bash
-   node server.js
-   ```
-2. Open your browser and navigate to `http://localhost:3000`.
+### 3. Start the Server
+```bash
+npm install
+node server.js
+```
 
 ---
 
-## 🧠 Training the Models
+## 🏃 Training the Intelligence
 
-If you wish to retrain the underlying models with new data:
-1. Update `model/energy_dataset.csv`.
-2. Run the training script:
-   ```bash
-   python train_qa_model.py
-   ```
-   *Note: Training scripts require additional dependencies listed in requirements.txt.*
+If you wish to retrain the models with fresh data:
+
+1.  **Generate Data**: `python model/generate_dataset.py`
+2.  **Train Energy ML**: `python model/train_keras_model.py`
+3.  **Train NLP Engine**: `python train_qa_model.py`
+
+*Note: All models are automatically saved as `.keras` artifacts for fast inference.*
 
 ---
 
 ## 📄 License
-This project is licensed under the MIT License.
+This project is licensed under the MIT License - see the LICENSE file for details.
 
 ---
 
-*Eco-AI — Empowering a Greener Tomorrow.*
+**Eco-AI — Empowering a Greener Tomorrow, One Conversation at a Time.**
