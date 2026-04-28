@@ -1,0 +1,10 @@
+node_modules/
+.venv/
+.env
+.git/
+scratch/
+test_output.json
+*.log
+npm-debug.log
+__pycache__/
+*.pyc

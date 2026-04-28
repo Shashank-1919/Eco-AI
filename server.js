@@ -3,6 +3,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import { spawn } from 'child_process';
 import path from 'path';
+import os from 'os';
 import { fileURLToPath } from 'url';
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
@@ -15,6 +16,9 @@ dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// Cross-platform Python path detection
+const pythonExecutable = process.env.PYTHON_PATH || (os.platform() === 'win32' ? path.join(__dirname, '.venv', 'Scripts', 'python.exe') : 'python3');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -173,9 +177,8 @@ app.post('/api/chat', async (req, res) => {
         message
     };
 
-    const pythonPath = path.join(__dirname, '.venv', 'Scripts', 'python.exe');
     console.log('Spawning inference process for message...');
-    const pythonProcess = spawn(pythonPath, ['run_inference.py', JSON.stringify(payload)]);
+    const pythonProcess = spawn(pythonExecutable, ['run_inference.py', JSON.stringify(payload)]);
     let result = '';
     let error = '';
 
@@ -229,8 +232,7 @@ app.post('/api/expand', async (req, res) => {
     // Handle NLP Q&A
     if (topic === 'question' && question) {
         console.log('Spawning NLP QA engine for:', question);
-        const pythonPath = path.join(__dirname, '.venv', 'Scripts', 'python.exe');
-        const pythonProcess = spawn(pythonPath, ['predict_qa.py', question]);
+        const pythonProcess = spawn(pythonExecutable, ['predict_qa.py', question]);
         
         let fullResult = '';
         pythonProcess.stdout.on('data', (data) => {

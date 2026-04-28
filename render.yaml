@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: eco-ai
+    env: docker
+    plan: free
+    autoDeploy: true
+    envVars:
+      - key: MONGODB_URI
+        sync: false # Requires manual entry in Render Dashboard
+      - key: JWT_SECRET
+        generateValue: true # Render will generate a strong secret
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
